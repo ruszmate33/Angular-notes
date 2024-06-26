@@ -317,7 +317,7 @@ export class UserComponent {
 - with Signals it does not need to check every possible component for changes
 - signals is a bit more verbose
 
-## Computed value with signals
+#### Computed value with signals
 - previously with a getter
 ```ts
 export class UserComponent {
@@ -343,3 +343,50 @@ export class UserComponent {
     />
 ```
 
+
+## Reusing mulitple components
+- we could repeat the `<li><app-user /></li>` in the template
+
+```html
+<app-header></app-header>
+
+<main>
+  <ul id="users">
+    <li><app-user /></li>
+    <li><app-user /></li>
+    <li><app-user /></li>
+  </ul>
+</main>
+```
+### Defining component inputs
+- eg. mark "avatar" as a set-table property from outside
+
+- user.component.ts
+```ts
+import { Input } from '@angular/core'
+
+@Component({
+  ...
+})
+export class UserComponent {
+  @Input() avatar!: string;
+}
+```
+- with `avatar!: string` we declare that it will definately be set from the outside
+
+- app.component.ts
+```ts
+import { DUMMY_USERS } from './dummy-users'
+@Component({
+
+})
+export class AppComponent {
+  users = DUMMY_USERS;
+}
+```
+
+- app.component.html
+```html
+    <li><app-user [avatar]="users[0].avatar"/></li>
+    <li><app-user [avatar]="users[1].avatar"/></li>
+```
