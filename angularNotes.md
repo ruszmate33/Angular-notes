@@ -271,7 +271,7 @@ export class UserComponent {
 
 ### Signals
 
-- this notifies Ng about the change and it update everywhere with 
+- this notifies Ng about the change and it update everywhere with
 
 ```ts
 // import
@@ -290,27 +290,25 @@ export class UserComponent {
   }
 }
 ```
+
 - in the template we access the signal value
 - not like this
+
 ```html
-    <span>
-      {{ selectedUser.name }}
-    </span>
+<span> {{ selectedUser.name }} </span>
 ```
+
 - but call the signal value as a function, to make the sig
+
 ```html
 <div>
   <button (click)="onSelectUser()">
-    <img
-      [src]="imagePath"
-      [alt]="selectedUser().name"
-    />
-    <span>
-      {{ selectedUser().name }}
-    </span>
+    <img [src]="imagePath" [alt]="selectedUser().name" />
+    <span> {{ selectedUser().name }} </span>
   </button>
 </div>
 ```
+
 - this then executes the signals read function, that gives you the value stored in it
 - Ng sets up a subscription behind the scene (tracking it)
 - very much different to `zone` mechanism
@@ -318,7 +316,9 @@ export class UserComponent {
 - signals is a bit more verbose
 
 #### Computed value with signals
+
 - previously with a getter
+
 ```ts
 export class UserComponent {
   ...
@@ -326,25 +326,27 @@ export class UserComponent {
     return 'assets/users/' + this.selectedUser.avatar;
   }
 ```
+
 - now with a `computed`
+
 ```ts
 export class UserComponent {
   ...
   imagePath = computed(() => 'assets/users/' + this.selectedUser().avatar)
 ```
+
 - also sets up a subscription, only recomputes on demand
 - computed also returns a signal
 - need to do it in the template as well: `[src]="imagePath"` -> `[src]="imagePath()"`
+
 ```html
 <button (click)="onSelectUser()">
-    <img
-      [src]="imagePath()"
-      [alt]="selectedUser().name"
-    />
+  <img [src]="imagePath()" [alt]="selectedUser().name" />
+</button>
 ```
 
-
 ## Reusing mulitple components
+
 - we could repeat the `<li><app-user /></li>` in the template
 
 ```html
@@ -358,10 +360,13 @@ export class UserComponent {
   </ul>
 </main>
 ```
+
 ### Defining component inputs
+
 - eg. mark "avatar" as a set-table property from outside
 
 - user.component.ts
+
 ```ts
 import { Input } from '@angular/core'
 
@@ -372,21 +377,88 @@ export class UserComponent {
   @Input() avatar!: string;
 }
 ```
+
 - with `avatar!: string` we declare that it will definately be set from the outside
 
 - app.component.ts
-```ts
-import { DUMMY_USERS } from './dummy-users'
-@Component({
 
-})
+```ts
+import { DUMMY_USERS } from "./dummy-users";
+@Component({})
 export class AppComponent {
   users = DUMMY_USERS;
 }
 ```
 
 - app.component.html
+
 ```html
-    <li><app-user [avatar]="users[0].avatar"/></li>
-    <li><app-user [avatar]="users[1].avatar"/></li>
+<li><app-user [avatar]="users[0].avatar" /></li>
+<li><app-user [avatar]="users[1].avatar" /></li>
+```
+
+### Required and optional inputs
+
+```ts
+@Input({ required: true }) avatar!: string;
+```
+
+### User input signals
+- this is for properties: `@Inputs({ required: true }) avatar!: string`, a decorator
+- this is for accepting signals as inputs: `avatar = input<string>();`, a function
+- you can pass an empty value for default: `avatar = input('')`
+- or just tell the generic type `avatar = input<string>();`
+- mark it as required with `avatar = input.required<string>()`
+  - if required, you can't set a default value: `avatar = input.required('')` errors
+
+
+
+```ts
+import { input } from '@angular/core'
+
+export class UserComponent {
+  avatar = input<string>();
+  name = input<string>();
+}
+```
+#### Setting input signals
+- outside the class you still set the component with the same syntax at app.component.html
+- the value does not have to be a signal, also works with signals
+```ts
+<li><app-user [avatar]="users[0].avatar" [name]="users[0].name"/></li>
+```
+- the users is a normal array, not wrapped in a signal
+```ts
+export class AppComponent {
+  ...
+  users = DUMMY_USERS;
+}
+```
+#### Use input signals
+- you need to use the input signals as signals in the template
+- user.component.html `[alt]="name()"` and `<span>{{ name() }}</span>` and `[src]="imagePath()"`
+- instead of the getter in `user.component.ts` use a computed function
+```ts
+get imagePath() {
+    return 'assets/users/' + this.avatar;
+  }
+```
+to
+```ts
+imagePath computed(() => {
+  return 'assets/users/' + this.avatar();
+});
+```
+- this only recomputes `imagePath` is the `avatar` signal has changed
+
+#### Can not change the input signal from inside the class
+- they are read only, can't be changed from inside the class where they are registered
+- only from outside
+```ts
+export class UserComponent {
+  ...
+  onSelectUser() {
+    this.avatar.set(...) // this errors
+  }
+}
 ```
