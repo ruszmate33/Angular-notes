@@ -502,3 +502,22 @@ export class AppComponent {
   }
 }
 ```
+
+### Modern approach to create Outputs
+
+```ts
+import { output } from '@angular/core';
+
+// old way
+// @Output() select = new EventEmitter();
+
+// new way
+select = output<string>();
+```
+- this would be more consistent with the input function (that creates signals, but this does not)
+
+```ts
+id = input.required<string>();
+select = output<string>();
+
+```
