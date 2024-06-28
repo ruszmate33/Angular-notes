@@ -462,3 +462,43 @@ export class UserComponent {
   }
 }
 ```
+
+## Working with Outputs and emitting data
+- we need to create a custom event that UserComponent can emit when it was clicked
+- eventemitter emits the custom event to any parent component that is interested
+
+```ts
+import { Output, EventEmitter } from '@angular/core'
+export class UserComponent {
+  ...
+  @Input({ required: true }) id!: string;
+  // add a descriptive name to it
+  @Output() select = new EventEmitter();
+
+  onSelectUser() {
+    this.select.emit(this.id);
+  }
+}
+```
+- add `id` in app.component.html
+- add event binding for `select`
+- use `$event` to access the emitted value by the event it is listening for
+```html
+<li>
+  <app-user 
+    [id]="users[0].id" 
+    [avatar]="users[0].avatar" 
+    [name]="users[0].name"
+    (select)="onSelectUser($event)"
+    />
+  </li>
+```
+- add a method to app.component.ts
+```ts
+export class AppComponent {
+  ...
+  onSelectUser(id: string) {
+    console.log('Selected user with id' + id);
+  }
+}
+```
