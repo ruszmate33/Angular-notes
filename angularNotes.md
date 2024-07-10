@@ -521,3 +521,88 @@ id = input.required<string>();
 select = output<string>();
 
 ```
+
+### Adding extra type information to EventEmitter
+```ts
+@Output() select = new EventEmitter<string>()  // defined that a string will be emitted
+```
+
+#### Exercise: 
+- create a component for the task of the user
+- you click a usercomponent and it open a "Tasks" component
+- right now will receive and output the name of the selected user
+```ts
+DUMMY_USERS.find(user => user.id === selectedUserId)
+```
+- we get the information, which user is selected in the appcomponent
+- it should be added in the appcomponent (template) eg. `<app-tasks name=...>`
+
+
+
+```sh
+ng generate component tasks
+```
+
+- standalone
+
+
+- Component: put data into it
+```ts
+export class TasksComponent {
+  @Input({ required: true }) selected_user_id!: string  // a set-table property from outside
+  selectedUser = DUMMY_USERS.find(user => user.id === selectedUserId)
+}
+```
+
+
+- Template: put data to it
+```html
+<span> {{ selectedUser.name }}<span>
+```
+
+- set it in the AppComponent template
+
+#### Solution
+- `ng g c tasks --skipt-tests`
+
+- tasks.component.html
+```html
+<h2> {{ name }}<h2>
+```
+
+- tasks.component.ts
+```ts
+@Input({ required: true }) name!: string
+```
+
+- app.component.html
+  - pass data
+
+- import TasksComponent in the AppComponent
+```ts
+imports: [... TasksComponent],
+```
+
+- app.component.ts - store the information which user was selected
+```ts
+export class AppComponent {
+  ...
+  selectedUserId = 'u1'  // set an initial value
+
+  // use a computed value for a user that you can pass for property binding
+  get selectedUser() {
+    return this.users.find(user => user.id === this.selectedUserId)!
+  }
+  // the exlammation mark help to satisfy TS, although it can happen that
+  // it does not find anything and returns undefined
+ onSelectUser(id: string) {
+  this.selectedUserId = id;
+ }
+}
+```
+
+- app.component.html
+```html
+<app-tasks [name]="selectedUser.name"></app-tasks>
+```
+- now upon selecting a user it output its name into the tasks
