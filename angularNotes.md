@@ -606,3 +606,55 @@ export class AppComponent {
 <app-tasks [name]="selectedUser.name"></app-tasks>
 ```
 - now upon selecting a user it output its name into the tasks
+
+## TypeScript: undefined, union values, union types
+```ts
+@Input({ required: true }) id!: string;
+```
+- you say that undefined wont happen, technically still possible
+- since `required`, ts already complains if not set in the code
+
+
+- this however we cant say with certainty, it might return undefined
+```ts
+get selectedUser() {
+    return this.users.find(user => user.id === this.selectedUserId)!
+  }
+```
+- rather make the receiver more flexible
+  - not `required` and a `?`
+  - meand that this might not be set and I am aware of that
+```ts
+export class TasksComponent {
+  @Input() name?: string;
+}
+```
+
+- this "not required" and "?" does not interfere with (can be undefined)
+```html
+<h1>{{ name }}</h1>
+```
+
+-it does interfere with
+```html
+<app-tasks [name]="selectedUser.name" />
+```
+- since `selectedUser` might get undefined, of which has no `name`
+- only access name if it is NOT undefined (plain JS-way)
+- otherwise undefined as a fallback
+```html
+<app-tasks [name]="selectedUser?.name" />
+```
+
+- or define custom fallback value with ternary operator
+```html
+<app-tasks [name]="selectedUser ? selectedUser.name : 'fallback value'" />
+```
+
+### Union type
+- alternatively you can just declare that `name` can be also undefined
+```ts
+export class TasksComponent {
+  @Input() name: string | undefined;
+}
+```
