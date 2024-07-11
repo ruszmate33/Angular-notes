@@ -725,3 +725,23 @@ interface User {
   </ul>
 ```
 - the `track` is for Angular update mechanism: to check if the data changes what it needs to re-render and what can keep
+
+## Outputting conditional content
+- eg. make `selectedUserId` optional
+- from `selectedUserId = 'u1'`
+- to
+```ts
+export class AppComponent {
+  selectedUserId?: string;
+}
+```
+- in the template from
+`<app-tasks [name]="selectedUser?.name"></app-tasks>`
+- to
+```html
+@if (selectedUser) {
+  <app-tasks [name]="selectedUser.name"></app-tasks>
+  } @else {
+  <p id="Fallback">Select a user to see their tasks!</p>
+  }
+```
