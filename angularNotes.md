@@ -658,3 +658,36 @@ export class TasksComponent {
   @Input() name: string | undefined;
 }
 ```
+
+### Type Alias: Define custom types with object types
+- go from
+```ts
+export class UserComponent {
+  @Input({ required: true }) id!: string;
+  @Input({ required: true }) avatar!: string;
+  @Input({ required: true }) name!: string;
+```
+- this
+```ts
+type  User = {
+  id: string;
+  avatar: string;
+  name: string;
+}
+export class UserComponent {
+  @Input({ required: true }) user!: User;
+  ...
+}
+```
+- adjust also everywhere, to access these through a user object: user.name, this.user.id, this.user.avatar
+
+### Interface
+- often either an `interface` or an alias `type` can be used
+- no `=` in syntax definition
+```ts
+interface User {
+  id: string;
+  avatar: string;
+  name: string;
+}
+```
