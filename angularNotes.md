@@ -691,3 +691,37 @@ interface User {
   name: string;
 }
 ```
+
+
+## Outputting list content: Iteratig with angular
+- from
+```ts
+<ul id="users">
+    <li>
+      <app-user
+        [user]="users[0]"
+        (select)="onSelectUser($event)"
+      />
+    </li>
+
+    <li>
+      <app-user
+        [user]="users[1]"
+        (select)="onSelectUser($event)"
+      />
+    </li>
+```
+- to 
+```ts
+<ul id="users">
+    @for (user of users; track user.id) {
+      <li>
+        <app-user
+          [user]="user"
+          (select)="onSelectUser($event)"
+        />
+      </li>  
+    }
+  </ul>
+```
+- the `track` is for Angular update mechanism: to check if the data changes what it needs to re-render and what can keep
