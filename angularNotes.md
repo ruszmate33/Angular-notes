@@ -745,3 +745,31 @@ export class AppComponent {
   <p id="Fallback">Select a user to see their tasks!</p>
   }
 ```
+
+### Legacy Angular: ngFor & ngIf
+```html
+<ul id="users">
+    <!-- @for (user of users; track user.id) { -->
+      <li *ngFor="let user of users">
+        <app-user
+          [user]="user"
+          (select)="onSelectUser($event)"
+        />
+      </li>  
+    <!-- } -->
+  </ul>
+```
+
+- import `ngFor`, `ngIf` at the compoent too `app.comopnent`, so that you can use it in the template
+  - `import { NgFor, NgIf } from '@angular/common';`
+  - imports: [...NgFor, NgIf]
+
+```html
+<!-- @if (selectedUser) { -->
+  <app-tasks *ngIf="selectedUser; else fallback" [name]="selectedUser.name!" />
+  <!-- } @else { -->
+  <ng-template #fallback>
+    <p id="Fallback">Select a user to see their tasks!</p>
+  </ng-template>
+  <!-- } -->
+```
