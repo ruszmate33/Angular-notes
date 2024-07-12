@@ -404,6 +404,7 @@ export class AppComponent {
 ```
 
 ### User input signals
+
 - this is for properties: `@Inputs({ required: true }) avatar!: string`, a decorator
 - this is for accepting signals as inputs: `avatar = input<string>();`, a function
 - you can pass an empty value for default: `avatar = input('')`
@@ -411,49 +412,60 @@ export class AppComponent {
 - mark it as required with `avatar = input.required<string>()`
   - if required, you can't set a default value: `avatar = input.required('')` errors
 
-
-
 ```ts
-import { input } from '@angular/core'
+import { input } from "@angular/core";
 
 export class UserComponent {
   avatar = input<string>();
   name = input<string>();
 }
 ```
+
 #### Setting input signals
+
 - outside the class you still set the component with the same syntax at app.component.html
 - the value does not have to be a signal, also works with signals
+
 ```ts
 <li><app-user [avatar]="users[0].avatar" [name]="users[0].name"/></li>
 ```
+
 - the users is a normal array, not wrapped in a signal
+
 ```ts
 export class AppComponent {
   ...
   users = DUMMY_USERS;
 }
 ```
+
 #### Use input signals
+
 - you need to use the input signals as signals in the template
 - user.component.html `[alt]="name()"` and `<span>{{ name() }}</span>` and `[src]="imagePath()"`
 - instead of the getter in `user.component.ts` use a computed function
+
 ```ts
 get imagePath() {
     return 'assets/users/' + this.avatar;
   }
 ```
+
 to
+
 ```ts
 imagePath computed(() => {
   return 'assets/users/' + this.avatar();
 });
 ```
+
 - this only recomputes `imagePath` is the `avatar` signal has changed
 
 #### Can not change the input signal from inside the class
+
 - they are read only, can't be changed from inside the class where they are registered
 - only from outside
+
 ```ts
 export class UserComponent {
   ...
@@ -464,6 +476,7 @@ export class UserComponent {
 ```
 
 ## Working with Outputs and emitting data
+
 - we need to create a custom event that UserComponent can emit when it was clicked
 - eventemitter emits the custom event to any parent component that is interested
 
@@ -480,20 +493,24 @@ export class UserComponent {
   }
 }
 ```
+
 - add `id` in app.component.html
 - add event binding for `select`
 - use `$event` to access the emitted value by the event it is listening for
+
 ```html
 <li>
-  <app-user 
-    [id]="users[0].id" 
-    [avatar]="users[0].avatar" 
+  <app-user
+    [id]="users[0].id"
+    [avatar]="users[0].avatar"
     [name]="users[0].name"
     (select)="onSelectUser($event)"
-    />
-  </li>
+  />
+</li>
 ```
+
 - add a method to app.component.ts
+
 ```ts
 export class AppComponent {
   ...
@@ -506,7 +523,7 @@ export class AppComponent {
 ### Modern approach to create Outputs
 
 ```ts
-import { output } from '@angular/core';
+import { output } from "@angular/core";
 
 // old way
 // @Output() select = new EventEmitter();
@@ -514,30 +531,32 @@ import { output } from '@angular/core';
 // new way
 select = output<string>();
 ```
+
 - this would be more consistent with the input function (that creates signals, but this does not)
 
 ```ts
 id = input.required<string>();
 select = output<string>();
-
 ```
 
 ### Adding extra type information to EventEmitter
+
 ```ts
 @Output() select = new EventEmitter<string>()  // defined that a string will be emitted
 ```
 
-#### Exercise: 
+#### Exercise:
+
 - create a component for the task of the user
 - you click a usercomponent and it open a "Tasks" component
 - right now will receive and output the name of the selected user
+
 ```ts
-DUMMY_USERS.find(user => user.id === selectedUserId)
+DUMMY_USERS.find((user) => user.id === selectedUserId);
 ```
+
 - we get the information, which user is selected in the appcomponent
 - it should be added in the appcomponent (template) eg. `<app-tasks name=...>`
-
-
 
 ```sh
 ng generate component tasks
@@ -545,45 +564,54 @@ ng generate component tasks
 
 - standalone
 
-
 - Component: put data into it
+
 ```ts
 export class TasksComponent {
-  @Input({ required: true }) selected_user_id!: string  // a set-table property from outside
-  selectedUser = DUMMY_USERS.find(user => user.id === selectedUserId)
+  @Input({ required: true }) selected_user_id!: string; // a set-table property from outside
+  selectedUser = DUMMY_USERS.find((user) => user.id === selectedUserId);
 }
 ```
 
-
 - Template: put data to it
+
 ```html
-<span> {{ selectedUser.name }}<span>
+<span> {{ selectedUser.name }}<span></span></span>
 ```
 
 - set it in the AppComponent template
 
 #### Solution
+
 - `ng g c tasks --skipt-tests`
 
 - tasks.component.html
+
 ```html
-<h2> {{ name }}<h2>
+<h2>
+  {{ name }}
+  <h2></h2>
+</h2>
 ```
 
 - tasks.component.ts
+
 ```ts
 @Input({ required: true }) name!: string
 ```
 
 - app.component.html
+
   - pass data
 
 - import TasksComponent in the AppComponent
+
 ```ts
 imports: [... TasksComponent],
 ```
 
 - app.component.ts - store the information which user was selected
+
 ```ts
 export class AppComponent {
   ...
@@ -602,28 +630,34 @@ export class AppComponent {
 ```
 
 - app.component.html
+
 ```html
 <app-tasks [name]="selectedUser.name"></app-tasks>
 ```
+
 - now upon selecting a user it output its name into the tasks
 
 ## TypeScript: undefined, union values, union types
+
 ```ts
 @Input({ required: true }) id!: string;
 ```
+
 - you say that undefined wont happen, technically still possible
 - since `required`, ts already complains if not set in the code
 
-
 - this however we cant say with certainty, it might return undefined
+
 ```ts
 get selectedUser() {
     return this.users.find(user => user.id === this.selectedUserId)!
   }
 ```
+
 - rather make the receiver more flexible
   - not `required` and a `?`
   - meand that this might not be set and I am aware of that
+
 ```ts
 export class TasksComponent {
   @Input() name?: string;
@@ -631,28 +665,35 @@ export class TasksComponent {
 ```
 
 - this "not required" and "?" does not interfere with (can be undefined)
+
 ```html
 <h1>{{ name }}</h1>
 ```
 
 -it does interfere with
+
 ```html
 <app-tasks [name]="selectedUser.name" />
 ```
+
 - since `selectedUser` might get undefined, of which has no `name`
 - only access name if it is NOT undefined (plain JS-way)
 - otherwise undefined as a fallback
+
 ```html
 <app-tasks [name]="selectedUser?.name" />
 ```
 
 - or define custom fallback value with ternary operator
+
 ```html
 <app-tasks [name]="selectedUser ? selectedUser.name : 'fallback value'" />
 ```
 
 ### Union type
+
 - alternatively you can just declare that `name` can be also undefined
+
 ```ts
 export class TasksComponent {
   @Input() name: string | undefined;
@@ -660,14 +701,18 @@ export class TasksComponent {
 ```
 
 ### Type Alias: Define custom types with object types
+
 - go from
+
 ```ts
 export class UserComponent {
   @Input({ required: true }) id!: string;
   @Input({ required: true }) avatar!: string;
   @Input({ required: true }) name!: string;
 ```
+
 - this
+
 ```ts
 type  User = {
   id: string;
@@ -679,11 +724,14 @@ export class UserComponent {
   ...
 }
 ```
+
 - adjust also everywhere, to access these through a user object: user.name, this.user.id, this.user.avatar
 
 ### Interface
+
 - often either an `interface` or an alias `type` can be used
 - no `=` in syntax definition
+
 ```ts
 interface User {
   id: string;
@@ -692,9 +740,10 @@ interface User {
 }
 ```
 
-
 ## Outputting list content: Iteratig with angular
+
 - from
+
 ```ts
 <ul id="users">
     <li>
@@ -711,7 +760,9 @@ interface User {
       />
     </li>
 ```
-- to 
+
+- to
+
 ```ts
 <ul id="users">
     @for (user of users; track user.id) {
@@ -720,44 +771,47 @@ interface User {
           [user]="user"
           (select)="onSelectUser($event)"
         />
-      </li>  
+      </li>
     }
   </ul>
 ```
+
 - the `track` is for Angular update mechanism: to check if the data changes what it needs to re-render and what can keep
 
 ## Outputting conditional content
+
 - eg. make `selectedUserId` optional
 - from `selectedUserId = 'u1'`
 - to
+
 ```ts
 export class AppComponent {
   selectedUserId?: string;
 }
 ```
+
 - in the template from
-`<app-tasks [name]="selectedUser?.name"></app-tasks>`
+  `<app-tasks [name]="selectedUser?.name"></app-tasks>`
 - to
+
 ```html
 @if (selectedUser) {
-  <app-tasks [name]="selectedUser.name"></app-tasks>
-  } @else {
-  <p id="Fallback">Select a user to see their tasks!</p>
-  }
+<app-tasks [name]="selectedUser.name"></app-tasks>
+} @else {
+<p id="Fallback">Select a user to see their tasks!</p>
+}
 ```
 
 ### Legacy Angular: ngFor & ngIf
+
 ```html
 <ul id="users">
-    <!-- @for (user of users; track user.id) { -->
-      <li *ngFor="let user of users">
-        <app-user
-          [user]="user"
-          (select)="onSelectUser($event)"
-        />
-      </li>  
-    <!-- } -->
-  </ul>
+  <!-- @for (user of users; track user.id) { -->
+  <li *ngFor="let user of users">
+    <app-user [user]="user" (select)="onSelectUser($event)" />
+  </li>
+  <!-- } -->
+</ul>
 ```
 
 - import `ngFor`, `ngIf` at the compoent too `app.comopnent`, so that you can use it in the template
@@ -766,10 +820,86 @@ export class AppComponent {
 
 ```html
 <!-- @if (selectedUser) { -->
-  <app-tasks *ngIf="selectedUser; else fallback" [name]="selectedUser.name!" />
-  <!-- } @else { -->
-  <ng-template #fallback>
-    <p id="Fallback">Select a user to see their tasks!</p>
-  </ng-template>
-  <!-- } -->
+<app-tasks *ngIf="selectedUser; else fallback" [name]="selectedUser.name!" />
+<!-- } @else { -->
+<ng-template #fallback>
+  <p id="Fallback">Select a user to see their tasks!</p>
+</ng-template>
+<!-- } -->
+```
+
+## Create a "task" component
+
+- to create inside the tasks folder `ng g c tasks/task --skip-tests`
+
+### Outputting User-specific Tasks
+
+- add some dummy tasks to a class property `tasks`
+
+```ts
+export class TasksComponent {
+  @Input() name?: string;
+  tasks = [
+    {
+      id: 't1',
+      userId: 'u1',
+      title: 'Master Angular',
+      summary:
+        'Learn all the basic and advanced features of Angular & how to apply them.',
+      dueDate: '2025-12-31',
+    },
+```
+
+- iterate over it in the tasks template
+
+```html
+<ul>
+  @for (task of tasks; track task.id) {
+  <li>
+    <app-task />
+  </li>
+  }
+</ul>
+```
+
+- to only render the task of the given user, pass the id to the component
+- create a computed property to obtain the selected users tasks only
+```ts
+export class TasksComponent {
+  @Input({ required: true }) userId!: string;
+  @Input({ required: true }) name!: string;
+
+  get selectedUserTasks() {
+    return this.tasks.filter(task => task.userId === this.userId)
+  }
+  tasks = [
+    {
+      id: 't1',
+      userId: 'u1',
+      title: 'Master Angular',
+      ...
+    }
+    ...]
+```
+
+- pass `userId` in the app template
+```html
+@if (selectedUser) {
+  <app-tasks 
+  [userId]="selectedUser.id"
+  [name]="selectedUser.name"></app-tasks>
+  } @else {
+  <p id="Fallback">Select a user to see their tasks!</p>
+  }
+```
+
+- use the computed property in the tasks template to only show the tasks of the user
+```html
+  <ul>
+    @for (task of selectedUserTasks; track task.id) {
+    <li>
+      <app-task />
+    </li>
+    }
+  </ul>
 ```
