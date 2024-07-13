@@ -945,3 +945,20 @@ export class TaskComponent {
 - export it
 - can reuse user everywhere, import it
 - you can make if super explicit that it is only a type definition by adding the `type`, but not required
+
+
+### Which user was selected? Dynamic CSS styling with Class Bindings
+- use the `.active` CSS class from `user.component.css`
+
+- add a new Input to UserComponent `@Input({required: true}) selected!: boolean;`
+
+- in the app template 
+```html
+<app-user [user]="user" [selected]="user.id === selectedUserId">
+```
+
+- user template: use the `selected` property
+  - binding to the class goes like [class.{name of class you want to conditionally bind eg. "active"}]
+```html
+<button [class.active]="selected" ...>
+```
