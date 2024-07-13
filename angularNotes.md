@@ -903,3 +903,39 @@ export class TasksComponent {
     }
   </ul>
 ```
+
+### Outputting Task Data in the Task Component
+- pass it to the task
+```ts
+interface Task {
+  id: string;
+  userId: string;
+  title: string;
+  summary: string;
+  dueDate: string;
+}
+export class TaskComponent {
+  @Input({required: true}) task!: Task
+}
+```
+```html
+  <ul>
+    @for (task of selectedUserTasks; track task.id) {
+    <li>
+      <app-task [task]="task"/>
+    </li>
+    }
+  </ul>
+```
+
+- task template
+```html
+<article>
+  <h2>{{ task.title }}</h2>
+  <time>{{ task.dueDate }}</time>
+  <p>{{ task.summary }}</p>
+  <p class="actions">
+    <button>Complete</button>
+  </p>
+</article>
+```
