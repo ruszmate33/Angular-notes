@@ -864,6 +864,7 @@ export class TasksComponent {
 
 - to only render the task of the given user, pass the id to the component
 - create a computed property to obtain the selected users tasks only
+
 ```ts
 export class TasksComponent {
   @Input({ required: true }) userId!: string;
@@ -883,29 +884,31 @@ export class TasksComponent {
 ```
 
 - pass `userId` in the app template
+
 ```html
 @if (selectedUser) {
-  <app-tasks 
-  [userId]="selectedUser.id"
-  [name]="selectedUser.name"></app-tasks>
-  } @else {
-  <p id="Fallback">Select a user to see their tasks!</p>
-  }
+<app-tasks [userId]="selectedUser.id" [name]="selectedUser.name"></app-tasks>
+} @else {
+<p id="Fallback">Select a user to see their tasks!</p>
+}
 ```
 
 - use the computed property in the tasks template to only show the tasks of the user
+
 ```html
-  <ul>
-    @for (task of selectedUserTasks; track task.id) {
-    <li>
-      <app-task />
-    </li>
-    }
-  </ul>
+<ul>
+  @for (task of selectedUserTasks; track task.id) {
+  <li>
+    <app-task />
+  </li>
+  }
+</ul>
 ```
 
 ### Outputting Task Data in the Task Component
+
 - pass it to the task
+
 ```ts
 interface Task {
   id: string;
@@ -915,20 +918,22 @@ interface Task {
   dueDate: string;
 }
 export class TaskComponent {
-  @Input({required: true}) task!: Task
+  @Input({ required: true }) task!: Task;
 }
 ```
+
 ```html
-  <ul>
-    @for (task of selectedUserTasks; track task.id) {
-    <li>
-      <app-task [task]="task"/>
-    </li>
-    }
-  </ul>
+<ul>
+  @for (task of selectedUserTasks; track task.id) {
+  <li>
+    <app-task [task]="task" />
+  </li>
+  }
+</ul>
 ```
 
 - task template
+
 ```html
 <article>
   <h2>{{ task.title }}</h2>
@@ -941,24 +946,72 @@ export class TaskComponent {
 ```
 
 ### Storing Data Models in Separate Files
+
 - move user inteface into `user/user.model.ts`
 - export it
 - can reuse user everywhere, import it
 - you can make if super explicit that it is only a type definition by adding the `type`, but not required
 
-
 ### Which user was selected? Dynamic CSS styling with Class Bindings
+
 - use the `.active` CSS class from `user.component.css`
 
 - add a new Input to UserComponent `@Input({required: true}) selected!: boolean;`
 
-- in the app template 
+- in the app template
+
 ```html
-<app-user [user]="user" [selected]="user.id === selectedUserId">
+<app-user [user]="user" [selected]="user.id === selectedUserId"></app-user>
 ```
 
 - user template: use the `selected` property
   - binding to the class goes like [class.{name of class you want to conditionally bind eg. "active"}]
+
 ```html
-<button [class.active]="selected" ...>
+<button [class.active]="selected" ...></button>
+```
+
+### "Complete" button: deleting tasks
+
+- add a click listener on the `Complete` button in the task template
+
+```html
+<button (click)="onCompleteTask()">Complete</button>
+```
+
+- we want to communicate this to the tasks from the task
+- add an `Output` to the task component
+
+```ts
+export class TaskComponent {
+  ...
+  @Output() complete = new EventEmitter<string>();
+
+  onCompleteTask() {
+    this.complete.emit(this.task.id);
+  }
+}
+```
+
+- listen for the `onCompleteTask` in the tasks template with `(complete)=""` and trigger any method of our choice
+
+```html
+<ul>
+  @for (task of selectedUserTasks; track task.id) {
+  <li>
+    <app-task [task]="task" (complete)="onCompleteTask($event)" />
+  </li>
+  }
+</ul>
+```
+
+- add a method that can be triggered once the parent component tasks receives and emitted `complete` from the `task`
+- tasks component
+
+```ts
+export class TasksComponent {
+  ...
+  onCompleteTask(id: string) {
+    this.tasks = this.tasks.filter((task) => task.id !== id);
+  }
 ```
