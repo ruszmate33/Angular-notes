@@ -939,3 +939,9 @@ export class TaskComponent {
   </p>
 </article>
 ```
+
+### Storing Data Models in Separate Files
+- move user inteface into `user/user.model.ts`
+- export it
+- can reuse user everywhere, import it
+- you can make if super explicit that it is only a type definition by adding the `type`, but not required
