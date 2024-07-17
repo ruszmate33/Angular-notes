@@ -1015,3 +1015,129 @@ export class TasksComponent {
     this.tasks = this.tasks.filter((task) => task.id !== id);
   }
 ```
+
+### Add task: create, add render a component
+- there is already an `Add Tasks` button available in the `tasks` template
+
+- ok I oviously took a way easier version of this like 
+```html
+<button (click)="onAddTask()">Add Tasks</button>
+```
+
+- tasks component
+```ts
+  onAddTask() {
+    let newTask = {
+      id: 't100',
+      userId: `${this.userId}`,
+      title: 'Brand new task',
+      summary: 'Lorem Ipsum',
+      dueDate: '2025-12-31',
+    };
+    this.tasks.push(newTask);
+  }
+```
+-----------------------------------------
+- a new component `newTask` should be rather created
+```sh
+ng g c tasks/new-task --skip-tests
+```
+```html
+<button (click)="onStartAddNewTask()">Add Tasks</button>
+```
+- new method on the tasks `onStartAddNewTask`
+
+- plus extra property whether the extra new task is visible or not
+```ts
+export class TasksComponent {
+  ...
+  isAddingTask = false
+}
+
+onStartAddNewTask() {
+  this.isAddingTask = true;
+}
+```
+- use `isAddingTask` in the tasks template to conditionally show the new empty task
+- tasks template
+```html
+@if (isAddingTask) {
+<app-new-task></app-new-task>
+}
+```
+
+#### lets make it sure we can close the dialog
+- emit an event from new-task component, if backdrop or cancel button are clicked, that can be handled by the tasks component, that is rendering the new-task, sets `isAddingTask` to false
+
+##### My solution
+
+
+- (similar to `onCompleteTask` (from the `task`))
+- `onCancelAddTask`
+  - should trigger a an event emission on the Cancel button, on the new-task
+  ```html
+  <button (click)="onCancelAddTask()" type="button">Cancel</button>
+  ```
+  which is in the new-task template, so define at new-task component
+  ```ts
+  export class NewTaskComponent {
+  @Output() cancelAdd = new EventEmitter<boolean>();
+
+  onCancelAddTask() {
+    this.cancelAdd.emit(false);
+  }
+  ```
+  - and catch on the `tasks` component with a method of same name
+  ```ts
+  export class TasksComponent {
+     this.tasks = this.tasks.filter((task) => task.id !== id);
+   }
+ 
+  onStartAddNewTask() {
+     this.isAddingTask = true;
+   }
+
+  onCancelAddTask(isAddingTask: boolean) {
+    this.isAddingTask = isAddingTask;
+  }
+
+  ```
+- invoke this method on the tasks template with the emitted event
+```html
+  @if (isAddingTask) {
+    <app-new-task (cancelAdd)="onCancelAddTask($event)"></app-new-task>
+ }
+```
+
+##### Instructors solution
+```ts
+export class TasksComponent {}
+onCancelAddTask() {
+    this.isAddingTask = false;
+  }
+```
+
+- new-task template
+```html
+<div class="backdrop" (click)="onCancel()"></div>
+...
+<button (click)="onCancel()" type="button">Cancel</button>
+```
+
+- new-task component
+```ts
+export class NewTaskComponent {
+  @Output() cancel = new EventEmitter<void>();
+
+  onCancel() {
+    this.cancel.emit();
+  }
+}
+```
+
+- tasks template
+```html
+@if (isAddingTask) {
+<app-new-task (cancel)="onCancelAddTask()"></app-new-task>
+}
+```
