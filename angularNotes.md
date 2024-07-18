@@ -1141,3 +1141,150 @@ export class NewTaskComponent {
 <app-new-task (cancel)="onCancelAddTask()"></app-new-task>
 }
 ```
+
+### Extract the form data: Using directives & two-way-binding
+- we have already new-task template
+```html
+ <form>
+    <p>
+      <label for="title">Title</label>
+      <input type="text" id="title" name="title" />
+    </p>
+```
+
+- define a property that will correspond to the form data, like `enteredTitle`
+```ts
+export class NewTaskComponent {
+  @Output() cancel = new EventEmitter<void>();
+  enteredTitle = '';
+  
+ ...
+}
+```
+
+- add `[(ngModel)]` to establish two-way binding with directives
+```html
+<input type="text" id="title" name="title" [(ngModel)]="enteredTitle"/>
+```
+
+- also register the directive with the `FormsModule`
+```ts
+import { FormsModule } from '@angular/forms';
+
+@Component({
+  ...
+  imports: [FormsModule],
+})
+export class NewTaskComponent {
+  @Output() cancel = new EventEmitter<void>();
+  enteredTitle = '';
+ ...
+}
+```
+- now also do 
+  - `summary` -> `enteredSummary`
+  - `due-date` -> `enteredDate`
+- add to the respective html tag the `[(ngModel)]="enteredSummary"` and `[(ngModel)]="enteredDate"`
+
+```ts
+export class NewTaskComponent {
+  @Output() cancel = new EventEmitter<void>();
+  enteredTitle = '';
+  enteredSummary = '';
+  enteredDate = '';
+ ...
+}
+```
+#### Extract the form data: Using signals
+- wrap the initial value `''` with the signal function
+```ts
+import { signal } from '@angular/core';
+
+export class NewTaskComponent {
+  ...
+  enteredSummary = signal('');
+
+```
+- the template for two-way binding with signals is still valid, no need to change
+```html
+<input type="text" id="title" name="title" [(ngModel)]="enteredTitle"/>
+```
+
+### Handling Form Submission
+- now we dont want to do the default behavior
+- html works by defaaul if there is a `submit` button in a `form`, then upon clicking the button the browser would try to send the form data to the server that served the website
+- our development server is not configured to take incoming data. The development server is only configured to serve the index.html file
+- we want to close the dialog and add the new-task to the tasks array, handle it only on the client side
+- if you import the `FormsModule` it will prevent the default submission
+- to take control over the form submission behavior use `ngSubmit`
+
+```html
+<form (ngSubmit)="onSubmit()">
+```
+
+```ts
+export class NewTaskComponent {
+  ...
+  onSubmit() {
+
+  }
+}
+```
+
+### Using the Submitted Data
+- use `enteredTitle`, `enteredSummary``enteredDate` in `onSubmit()` to construct a new task
+- let the `tasks` know about the new `task` data that has been submitted, to add a new task to the tasks array, also close the newTask dialog by setting `isAdding` to false in the tasks
+- emit an event from newTask with an object data in it
+- in `onSubmit` emit the event
+```ts
+export class NewTaskComponent {
+  @Output() add = new EventEmitter<{title: string; summary: string; date: string}>();
+
+  onSubmit() {
+    this.add.emit({
+      title: this.enteredTitle,
+      summary: this.enteredSummary,
+      date: this.enteredDate,
+    })
+  }
+}
+```
+
+- listen for this event `add` in the `tasks` template
+```html
+<app-new-task ... (add)="onAddTask()" />
+```
+
+- you can define a `NewTaskData` interface eg. at the `task.model.ts`
+```ts
+export interface NewTaskData {
+  title: string;
+  summary; string;
+  date: string;
+}
+```
+
+- adapt at new-task component
+```ts
+export class NewTaskComponent {
+  @Output() add = new EventEmitter<NewTaskData>();
+```
+
+- create the new method `onAddTask` at the tasks component
+```ts
+onAddTask(taskData: NewTaskData) {
+  this.tasks.push({
+    id: new Date().getTime().toString(),
+    userId: this.userId,
+    title: taskData.title,
+    summary: taskData.summary,
+    dueDate: taskData.date
+  })
+  this.isAddingTask = false;
+}
+```
+
+- tasks template, the `add` event at the new-task calling the `onCancelAddTask` on the tasks
+```ts
+<app-new-task (cancel)="onCancelAddTask()" (add)="onAddTask($event)"></app-new-task>
+```
