@@ -1365,3 +1365,32 @@ div {
   <ng-content />
 </div>
 ```
+
+
+## Transforming Template Data with Pipes
+- more like Outpu transformers
+- the date from the task template
+```html
+<app-card>
+  <article>
+    ...
+    <time>{{ task.dueDate }}</time>
+```
+- is like 2015-12-28
+- import it
+```ts
+import { DatePipe } from '@angular/common';
+
+@Component({
+  ...
+  imports: [... DatePipe],
+```
+- use it like
+```html
+<time>{{ task.dueDate | date }}</time>
+```
+
+- can be configured like
+```html
+<time>{{ task.dueDate | date:'fullDate' }}</time>
+```
