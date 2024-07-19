@@ -1288,3 +1288,80 @@ onAddTask(taskData: NewTaskData) {
 ```ts
 <app-new-task (cancel)="onCancelAddTask()" (add)="onAddTask($event)"></app-new-task>
 ```
+
+## Content Projection with ng-content
+- get the same styling by wrapping components into shared, reusable components
+
+- there is a styling component which is already defined for the user component, but would be nice to reuse for other components
+- lets create a folder for shared UI components, put a `card` component to it
+```sh
+ng g c shared/card --skip-tests
+```
+
+- move this from the user css into the cards css dfile
+```css
+div {
+    border-radius: 6px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+```
+- put a div into the card template `<div>...</div>`
+- the idea is to use the `card` as a wrapper around the `user` button, instead of a "div"
+- now in user template:
+```html
+<div>
+  <button [class.active]="selected" (click)="onSelectUser()">
+    <img [src]="imagePath" [alt]="user.name" />
+    <span>
+      {{ user.name }}
+    </span>
+  </button>
+</div>
+```
+- to
+```html
+<app-card>
+  <button [class.active]="selected" (click)="onSelectUser()">
+    <img [src]="imagePath" [alt]="user.name" />
+    <span>
+      {{ user.name }}
+    </span>
+  </button>
+</app-card>
+```
+
+- also reuse it for the task template, instead of the "article"
+```html
+<article>
+  <h2>{{ task.title }}</h2>
+  <time>{{ task.dueDate }}</time>
+  <p>{{ task.summary }}</p>
+  <p class="actions">
+    <button (click)="onCompleteTask()">Complete</button>
+  </p>
+</article>
+```
+- to
+```html
+<app-card>
+  <article>
+    <h2>{{ task.title }}</h2>
+    <time>{{ task.dueDate }}</time>
+    <p>{{ task.summary }}</p>
+    <p class="actions">
+      <button (click)="onCompleteTask()">Complete</button>
+    </p>
+  </article>
+</app-card>
+
+```
+
+- this is now just replacing the wrapped markup with the `...`
+
+- if you want to combine the markup of the `card` and wrapped component, you need the special content in the markup of the warapper `ng-content`, which acts as a placeholder for the wrapped markup and merge these different markups together
+```html
+<div>
+  <ng-content />
+</div>
+```
