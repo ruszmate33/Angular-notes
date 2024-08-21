@@ -1394,3 +1394,33 @@ import { DatePipe } from '@angular/common';
 ```html
 <time>{{ task.dueDate | date:'fullDate' }}</time>
 ```
+
+## Getting started with services
+- `tasks` is doing a lot
+- refactor methods into services
+- keeping comopnents and classes as lean as possible
+- many methods on the `tasks` are used by other components
+- `newTask` adds a task with `NewTaskComponent.onSubmit()` -> `TasksComponent.onAddTask()`
+- `task` deletes a task: `TaskComponent.onCompleteTask()` -> `TasksComponent.onCompleteTask()`
+
+
+- create services at /tasks: `/tasks/tasks.service.ts`
+- service performs operation, manages data
+- move the `tasks` array here, make it private
+- add some public methods that can be reached outside the class and can get or manipulate these tasks
+- like `getUserTasks(userId: string)`, addTask, removeTask
+```ts
+export class TasksService { 
+    
+}
+```
+
+- export the `TasksService` to be able to use it in the TasksComponents, where you import it like `import { TasksService } from './tasks.service';`
+- instantiate the class as a private property on the component
+```ts
+export class TasksComponent {
+  ...
+  private tasksService = new TasksService()
+}
+```
+
