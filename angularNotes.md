@@ -1017,14 +1017,17 @@ export class TasksComponent {
 ```
 
 ### Add task: create, add render a component
+
 - there is already an `Add Tasks` button available in the `tasks` template
 
-- ok I oviously took a way easier version of this like 
+- ok I oviously took a way easier version of this like
+
 ```html
 <button (click)="onAddTask()">Add Tasks</button>
 ```
 
 - tasks component
+
 ```ts
   onAddTask() {
     let newTask = {
@@ -1037,17 +1040,23 @@ export class TasksComponent {
     this.tasks.push(newTask);
   }
 ```
------------------------------------------
+
+---
+
 - a new component `newTask` should be rather created
+
 ```sh
 ng g c tasks/new-task --skip-tests
 ```
+
 ```html
 <button (click)="onStartAddNewTask()">Add Tasks</button>
 ```
+
 - new method on the tasks `onStartAddNewTask`
 
 - plus extra property whether the extra new task is visible or not
+
 ```ts
 export class TasksComponent {
   ...
@@ -1058,8 +1067,10 @@ onStartAddNewTask() {
   this.isAddingTask = true;
 }
 ```
+
 - use `isAddingTask` in the tasks template to conditionally show the new empty task
 - tasks template
+
 ```html
 @if (isAddingTask) {
 <app-new-task></app-new-task>
@@ -1067,18 +1078,22 @@ onStartAddNewTask() {
 ```
 
 #### lets make it sure we can close the dialog
+
 - emit an event from new-task component, if backdrop or cancel button are clicked, that can be handled by the tasks component, that is rendering the new-task, sets `isAddingTask` to false
 
 ##### My solution
 
-
 - (similar to `onCompleteTask` (from the `task`))
 - `onCancelAddTask`
+
   - should trigger a an event emission on the Cancel button, on the new-task
+
   ```html
   <button (click)="onCancelAddTask()" type="button">Cancel</button>
   ```
+
   which is in the new-task template, so define at new-task component
+
   ```ts
   export class NewTaskComponent {
   @Output() cancelAdd = new EventEmitter<boolean>();
@@ -1087,12 +1102,14 @@ onStartAddNewTask() {
     this.cancelAdd.emit(false);
   }
   ```
+
   - and catch on the `tasks` component with a method of same name
+
   ```ts
   export class TasksComponent {
      this.tasks = this.tasks.filter((task) => task.id !== id);
    }
- 
+
   onStartAddNewTask() {
      this.isAddingTask = true;
    }
@@ -1102,14 +1119,17 @@ onStartAddNewTask() {
   }
 
   ```
+
 - invoke this method on the tasks template with the emitted event
+
 ```html
-  @if (isAddingTask) {
-    <app-new-task (cancelAdd)="onCancelAddTask($event)"></app-new-task>
- }
+@if (isAddingTask) {
+<app-new-task (cancelAdd)="onCancelAddTask($event)"></app-new-task>
+}
 ```
 
 ##### Instructors solution
+
 ```ts
 export class TasksComponent {}
 onCancelAddTask() {
@@ -1118,6 +1138,7 @@ onCancelAddTask() {
 ```
 
 - new-task template
+
 ```html
 <div class="backdrop" (click)="onCancel()"></div>
 ...
@@ -1125,6 +1146,7 @@ onCancelAddTask() {
 ```
 
 - new-task component
+
 ```ts
 export class NewTaskComponent {
   @Output() cancel = new EventEmitter<void>();
@@ -1136,6 +1158,7 @@ export class NewTaskComponent {
 ```
 
 - tasks template
+
 ```html
 @if (isAddingTask) {
 <app-new-task (cancel)="onCancelAddTask()"></app-new-task>
@@ -1143,31 +1166,37 @@ export class NewTaskComponent {
 ```
 
 ### Extract the form data: Using directives & two-way-binding
+
 - we have already new-task template
+
 ```html
- <form>
-    <p>
-      <label for="title">Title</label>
-      <input type="text" id="title" name="title" />
-    </p>
+<form>
+  <p>
+    <label for="title">Title</label>
+    <input type="text" id="title" name="title" />
+  </p>
+</form>
 ```
 
 - define a property that will correspond to the form data, like `enteredTitle`
+
 ```ts
 export class NewTaskComponent {
   @Output() cancel = new EventEmitter<void>();
   enteredTitle = '';
-  
+
  ...
 }
 ```
 
 - add `[(ngModel)]` to establish two-way binding with directives
+
 ```html
-<input type="text" id="title" name="title" [(ngModel)]="enteredTitle"/>
+<input type="text" id="title" name="title" [(ngModel)]="enteredTitle" />
 ```
 
 - also register the directive with the `FormsModule`
+
 ```ts
 import { FormsModule } from '@angular/forms';
 
@@ -1181,7 +1210,8 @@ export class NewTaskComponent {
  ...
 }
 ```
-- now also do 
+
+- now also do
   - `summary` -> `enteredSummary`
   - `due-date` -> `enteredDate`
 - add to the respective html tag the `[(ngModel)]="enteredSummary"` and `[(ngModel)]="enteredDate"`
@@ -1195,8 +1225,11 @@ export class NewTaskComponent {
  ...
 }
 ```
+
 #### Extract the form data: Using signals
+
 - wrap the initial value `''` with the signal function
+
 ```ts
 import { signal } from '@angular/core';
 
@@ -1205,12 +1238,15 @@ export class NewTaskComponent {
   enteredSummary = signal('');
 
 ```
+
 - the template for two-way binding with signals is still valid, no need to change
+
 ```html
-<input type="text" id="title" name="title" [(ngModel)]="enteredTitle"/>
+<input type="text" id="title" name="title" [(ngModel)]="enteredTitle" />
 ```
 
 ### Handling Form Submission
+
 - now we dont want to do the default behavior
 - html works by defaaul if there is a `submit` button in a `form`, then upon clicking the button the browser would try to send the form data to the server that served the website
 - our development server is not configured to take incoming data. The development server is only configured to serve the index.html file
@@ -1219,7 +1255,7 @@ export class NewTaskComponent {
 - to take control over the form submission behavior use `ngSubmit`
 
 ```html
-<form (ngSubmit)="onSubmit()">
+<form (ngSubmit)="onSubmit()"></form>
 ```
 
 ```ts
@@ -1232,45 +1268,56 @@ export class NewTaskComponent {
 ```
 
 ### Using the Submitted Data
-- use `enteredTitle`, `enteredSummary``enteredDate` in `onSubmit()` to construct a new task
+
+- use `enteredTitle`, ` enteredSummary``enteredDate ` in `onSubmit()` to construct a new task
 - let the `tasks` know about the new `task` data that has been submitted, to add a new task to the tasks array, also close the newTask dialog by setting `isAdding` to false in the tasks
 - emit an event from newTask with an object data in it
 - in `onSubmit` emit the event
+
 ```ts
 export class NewTaskComponent {
-  @Output() add = new EventEmitter<{title: string; summary: string; date: string}>();
+  @Output() add = new EventEmitter<{
+    title: string;
+    summary: string;
+    date: string;
+  }>();
 
   onSubmit() {
     this.add.emit({
       title: this.enteredTitle,
       summary: this.enteredSummary,
       date: this.enteredDate,
-    })
+    });
   }
 }
 ```
 
 - listen for this event `add` in the `tasks` template
+
 ```html
 <app-new-task ... (add)="onAddTask()" />
 ```
 
 - you can define a `NewTaskData` interface eg. at the `task.model.ts`
+
 ```ts
 export interface NewTaskData {
   title: string;
-  summary; string;
+  summary;
+  string;
   date: string;
 }
 ```
 
 - adapt at new-task component
+
 ```ts
 export class NewTaskComponent {
   @Output() add = new EventEmitter<NewTaskData>();
 ```
 
 - create the new method `onAddTask` at the tasks component
+
 ```ts
 onAddTask(taskData: NewTaskData) {
   this.tasks.push({
@@ -1285,53 +1332,58 @@ onAddTask(taskData: NewTaskData) {
 ```
 
 - tasks template, the `add` event at the new-task calling the `onCancelAddTask` on the tasks
+
 ```ts
 <app-new-task (cancel)="onCancelAddTask()" (add)="onAddTask($event)"></app-new-task>
 ```
 
 ## Content Projection with ng-content
+
 - get the same styling by wrapping components into shared, reusable components
 
 - there is a styling component which is already defined for the user component, but would be nice to reuse for other components
 - lets create a folder for shared UI components, put a `card` component to it
+
 ```sh
 ng g c shared/card --skip-tests
 ```
 
 - move this from the user css into the cards css dfile
+
 ```css
 div {
-    border-radius: 6px;
-    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-  }
+  border-radius: 6px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
 ```
+
 - put a div into the card template `<div>...</div>`
 - the idea is to use the `card` as a wrapper around the `user` button, instead of a "div"
 - now in user template:
+
 ```html
 <div>
   <button [class.active]="selected" (click)="onSelectUser()">
     <img [src]="imagePath" [alt]="user.name" />
-    <span>
-      {{ user.name }}
-    </span>
+    <span> {{ user.name }} </span>
   </button>
 </div>
 ```
+
 - to
+
 ```html
 <app-card>
   <button [class.active]="selected" (click)="onSelectUser()">
     <img [src]="imagePath" [alt]="user.name" />
-    <span>
-      {{ user.name }}
-    </span>
+    <span> {{ user.name }} </span>
   </button>
 </app-card>
 ```
 
 - also reuse it for the task template, instead of the "article"
+
 ```html
 <article>
   <h2>{{ task.title }}</h2>
@@ -1342,7 +1394,9 @@ div {
   </p>
 </article>
 ```
+
 - to
+
 ```html
 <app-card>
   <article>
@@ -1354,30 +1408,35 @@ div {
     </p>
   </article>
 </app-card>
-
 ```
 
 - this is now just replacing the wrapped markup with the `...`
 
 - if you want to combine the markup of the `card` and wrapped component, you need the special content in the markup of the warapper `ng-content`, which acts as a placeholder for the wrapped markup and merge these different markups together
+
 ```html
 <div>
   <ng-content />
 </div>
 ```
 
-
 ## Transforming Template Data with Pipes
+
 - more like Outpu transformers
 - the date from the task template
+
 ```html
 <app-card>
   <article>
     ...
     <time>{{ task.dueDate }}</time>
+  </article></app-card
+>
 ```
+
 - is like 2015-12-28
 - import it
+
 ```ts
 import { DatePipe } from '@angular/common';
 
@@ -1385,17 +1444,21 @@ import { DatePipe } from '@angular/common';
   ...
   imports: [... DatePipe],
 ```
+
 - use it like
+
 ```html
 <time>{{ task.dueDate | date }}</time>
 ```
 
 - can be configured like
+
 ```html
 <time>{{ task.dueDate | date:'fullDate' }}</time>
 ```
 
 ## Getting started with services
+
 - `tasks` is doing a lot
 - refactor methods into services
 - keeping comopnents and classes as lean as possible
@@ -1403,24 +1466,189 @@ import { DatePipe } from '@angular/common';
 - `newTask` adds a task with `NewTaskComponent.onSubmit()` -> `TasksComponent.onAddTask()`
 - `task` deletes a task: `TaskComponent.onCompleteTask()` -> `TasksComponent.onCompleteTask()`
 
-
 - create services at /tasks: `/tasks/tasks.service.ts`
 - service performs operation, manages data
-- move the `tasks` array here, make it private
+- move the `tasks` array here, make it `private`
 - add some public methods that can be reached outside the class and can get or manipulate these tasks
 - like `getUserTasks(userId: string)`, addTask, removeTask
+
 ```ts
-export class TasksService { 
-    
-}
+export class TasksService {
+  private tasks = [
+    {
+      id: 't1',
+      userId: 'u1',
+      ...
+    },
+    ...
+  ];
+  getUserTasks(userId: string) {
+    return this.tasks.filter((t) => t.userId === userId);
+  }
 ```
 
+### Getting started with dependency injection
+
 - export the `TasksService` to be able to use it in the TasksComponents, where you import it like `import { TasksService } from './tasks.service';`
+
+One possibility:
+
 - instantiate the class as a private property on the component
+
 ```ts
 export class TasksComponent {
   ...
   private tasksService = new TasksService()
+
+get selectedUserTasks() {
+  return this.tasksService.getUserTasks(this.userId);
 }
+}
+```
+
+- huge drawback: to use the service in a different component, we would need to instantiate it over there too, and that is a different instance, not shared
+- dependency injection solves this
+
+#### Dependency injection
+
+- add a `constructor()` method to the class eg. TaskComponent
+- will automatically executed once the class is instantiated, like TaskComponent
+- Angular calls it
+- specify the dependency and the tyoe, pass the class in it
+
+```ts
+export class TasksComponent {
+  ...
+  private tasksService: TasksService;
+  constructor(tasksService: TasksService) {
+    this.tasksService = tasksService
+  }
+}
+```
+
+OR a shortcut
+
+- no need to declare property tasksService on the class but only in the constructor
+
+```ts
+export class TasksComponent {
+  ...
+  constructor(private tasksService: TasksService) {}
+}
+```
+
+- also need to register `TasksService` class as an injectable
+- with `Injectable` decorator, that is also called and a config object is passed to it
+
+```ts
+import { Injectable } from "@angular/core";
+
+@Injectable({ providedIn: "root" })
+export class TasksService {}
+```
+
+### More Service Usage & Alternative Dependency Injection Mechanism
+
+- `new-tasks.component` use the `TasksService` class name as an "injection-token"
+- that is passed to the `inject` function
+
+```ts
+import { inject } from "@angular/core";
+import { TasksService } from "../tasks.service";
+
+export class NewTaskComponent {
+  private tasksService = inject(TasksService);
+}
+```
+
+- now you can get swap the `onSubmit`
+- also get the userId as an input, bc it will need it
+
+```ts
+onSubmit() {
+    this.add.emit({
+      title: this.enteredTitle,
+      summary: this.enteredSummary,
+      date: this.enteredDate,
+    });
+  }
+```
+
+to
+
+```ts
+export class NewTaskComponent {
+@Input({required: true}) userId!: string;
+
+onSubmit() {
+      this.tasksService.addTask({
+        title: this.enteredTitle,
+        summary: this.enteredSummary,
+        date: this.enteredDate,
+      },
+      this.userId);
+    }
+```
+
+- set the userId in `task.component.html`
+```html
+<app-new-task [userId]="userId" ...>
+```
+
+- we no longer emit the add event and we can get rid of it in the `NewTasksComponent`, from this `@Output() add = new EventEmitter<NewTaskData>();`
+
+- still to close the dialog
+- rename the `cancel` event to `close` and emit it after the data has been submitted
+
+```ts
+export class NewTaskComponent {
+  @Output() close = new EventEmitter<void>();
+
+  onCancel() {
+    this.close.emit();
+  }
+
+  onSubmit() {
+      this.tasksService.addTask({
+        title: this.enteredTitle,
+        summary: this.enteredSummary,
+        date: this.enteredDate,
+      },
+      this.userId);
+    this.close.emit();
+  }
+```
+- adapt in the `tasks.component.html` to listen for a `close`, not a `cancel` event
+
+from
+```html
+@if (isAddingTask) {
+<app-new-task
+  [userId]="userId"
+  (cancel)="onCancelAddTask()"
+  (add)="onAddTask($event)"
+></app-new-task>
+}
+```
+TO
+```html
+@if (isAddingTask) {
+<app-new-task
+  [userId]="userId"
+  (close)="onCloseAddTask()"
+></app-new-task>
+}
+```
+
+```ts
+export class TasksComponent {
+  ...
+
+  // onCancelAddTask() {
+  onCloseAddTask() {
+    this.isAddingTask = false;
+  }
+
+  // remove onAddTask
 ```
 
