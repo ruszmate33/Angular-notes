@@ -1720,3 +1720,37 @@ export class TaskComponent {
 ##### instructor does
 - yes, this was the solution
 
+## Using local storage for Data Storage
+- not just to keep them in a local array in the service
+
+```ts
+export class TasksService {
+  constructor() {
+    const tasks = localStorage.getItem('tasks');
+
+    if (tasks) {
+      this.tasks = JSON.parse(tasks);
+    }
+  }
+
+  private saveTasks() {
+    localStorage.setItam('tasks', JSON.stringify(this.tasks))
+  }
+  // call saveTasks after adding or removing a task
+
+  addTask(taskData: NewTaskData, userId: string) {
+    this.tasks.push({
+      id: new Date().getTime().toString(),
+      userId: userId,
+      title: taskData.title,
+      summary: taskData.summary,
+      dueDate: taskData.date,
+    });
+    this.saveTasks();
+  }
+  removeTask(id: string) {
+    this.tasks = this.tasks.filter((task) => task.id !== id);
+    this.saveTasks()
+  }
+
+```
