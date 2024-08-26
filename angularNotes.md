@@ -1652,3 +1652,71 @@ export class TasksComponent {
   // remove onAddTask
 ```
 
+#### add back the completion of tasks functionality
+```ts
+export class TasksComponent {
+   
+ 
+   onCompleteTask(id: string) {
++    this.tasksService.removeTask(id);
+```
+- this works for me
+- remove `tasks.oncompleteTask`
+- ok the main exercise is to not call this service inside `tasks` component
+- is it a better practice to have the logic on the template?!
+=================================
+- right now:
+- `tasks` template
+```html
+<ul>
+    @for (task of selectedUserTasks; track task.id) {
+    <li>
+      <app-task [task]="task" (complete)="onCompleteTask($event)" />
+    </li>
+    }
+  </ul>
+```
+- `task` component
+```ts
+export class TaskComponent {
+  @Input({ required: true }) task!: Task;
+  @Output() complete = new EventEmitter<string>();
+
+  onCompleteTask() {
+    this.complete.emit(this.task.id);
+  }
+}
+```
+=================================
+- it could be possible to not emit an event at `task` to `tasks`, but call the service?
+- `task` component
+```ts
+export class TaskComponent {
+  @Input({ required: true }) task!: Task;
+  // @Output() complete = new EventEmitter<string>();
+  private taskService = inject(TasksService)
+
+  onCompleteTask() {
+    // this.complete.emit(this.task.id);
+    this.taskService.removeTask(this.task.id)
+  }
+}
+```
+
+- also remove `(complete)="onCompleteTask($event)"` from the `tasks` template
+```html
+<ul>
+    @for (task of selectedUserTasks; track task.id) {
+    <li>
+      <app-task [task]="task" />
+    </li>
+    }
+  </ul>
+```
+- this works!!!
+- so I guess if you maintain data in the services and manipulate it like child -> parnent -> service via event emission, you can just go call from child component the service
+
+
+##### instructor does
+- yes, this was the solution
+
