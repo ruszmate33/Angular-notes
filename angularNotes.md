@@ -583,7 +583,7 @@ export class TasksComponent {
 
 #### Solution
 
-- `ng g c tasks --skipt-tests`
+- `ng g c tasks --skip-tests`
 
 - tasks.component.html
 
@@ -1720,7 +1720,7 @@ export class TaskComponent {
 ##### instructor does
 - yes, this was the solution
 
-## Using local storage for Data Storage
+### Using local storage for Data Storage
 - not just to keep them in a local array in the service
 
 ```ts
@@ -1752,5 +1752,128 @@ export class TasksService {
     this.tasks = this.tasks.filter((task) => task.id !== id);
     this.saveTasks()
   }
+```
 
+## Angular Modules (MgModule)
+- instead of standalone components, the old way
+
+### Turn a standalone component to a module
+- create `src/app/app.module.ts`
+- in the decorator `declarations` go all the components you need to register to work together
+- also directives, but that comes later
+- from all the components to use at `NgModule` remove the `standalone: true` (now from `AppComponent`)
+- also remove the `imports: [HeaderComponent, ...]` at `AppComponent` as this is only supported for standalone components
+
+```ts
+import { NgModule } from '@angular/core';
+
+import {AppComponent} from './app.component';
+
+@NgModule({
+  declarations: [AppComponent]
+})
+export class AppModule {
+
+}
+```
+
+### Adapt the main.ts
+
+- this only work with standalone component `AppComponent`
+- what is the root component
+
+main.ts
+```ts
+import { bootstrapApplication } from '@angular/platform-browser';
+import { appConfig } from './app/app.config';
+import { AppComponent } from './app/app.component';
+
+bootstrapApplication(AppComponent, appConfig)
+  .catch((err) => console.error(err));
+```
+
+- turn into
+```ts
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+
+import { AppComponent } from './app/app/module';
+
+platformBrowserDynamic().bootstrapModule(AppModule);
+```
+
+- also configure `bootstrap` in the root module, put all the root components into the array (typically only one)
+
+app.module.ts
+```ts
+import { NgModule } from '@angular/core';
+
+import {AppComponent} from './app.component';
+
+@NgModule({
+  declarations: [AppComponent, HeaderComponent]
+  bootstrap: [AppComponent]
+})
+export class AppModule {
+
+}
+```
+
+- we need to declare all the components in app.module.ts `declarations` that must know about each other. The `imports: [HeaderComponent, ...]` is gone from the component
+
+### Mix and Match standalone components with modules
+...67-68
+
+## Angular Essentials - Practice
+
+- in the root of the new project is a `public` folder; this can be used not via 
+```html
+<img src="public/image.png"/>
+```
+but
+```html
+<img src="image.png"/>
+```
+
+### Create a HeaderComponent with title & image
+```sh
+ng g c header --skip-tests
+```
+CREATE src/app/header/header.component.css (0 bytes)
+CREATE src/app/header/header.component.html (21 bytes)
+CREATE src/app/header/header.component.ts (234 bytes)
+
+- header.component.html
+```html
+<header>
+  <h1 class="header">Investment Calculator</h1>
+  <img class="header img" src="investment-calculator-logo.png" alt="logo" />
+</header>
+```
+- header.component.css
+```css
+header {
+    text-align: center;
+    margin: 3rem auto;
+  }
+  
+  header img {
+    width: 5rem;
+    height: 5rem;
+    object-fit: contain;
+    background-color: transparent;
+  }
+  
+  header h1 {
+    font-size: 1.5rem;
+  }
+```
+
+- app.component.ts
+```ts
+import { HeaderComponent } from './header/header.component';
+
+@Component({
+  ...
+  imports: [HeaderComponent]
+})
 ```
