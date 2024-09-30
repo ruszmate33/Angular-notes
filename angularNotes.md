@@ -1667,7 +1667,7 @@ export class TasksComponent {
 - this works for me
 - remove `tasks.oncompleteTask`
 - ok the main exercise is to not call this service inside `tasks` component
--  is it a better practice to have the logic on the template?!
+- is it a better practice to have the logic on the template?!
 - right now:
 - `tasks` template
 
@@ -2001,24 +2001,24 @@ export class UserInputComponent {
 - Turning the input string into a number
 - instead of `parseFloat` it can be just a `+`
 - `initialInvestment: parseFloat(this.enteredInitialInvestment)`
-vs
+  vs
 - `initialInvestment: +this.enteredInitialInvestment`
 
 ```ts
 @Component({
-  selector: 'app-user-input',
+  selector: "app-user-input",
   standalone: true,
   imports: [FormsModule],
-  templateUrl: './user-input.component.html',
-  styleUrl: './user-input.component.css',
+  templateUrl: "./user-input.component.html",
+  styleUrl: "./user-input.component.css",
 })
 export class UserInputComponent {
   @Output() calculate = new EventEmitter<InvestmentInput>();
 
-  enteredInitialInvestment = '0';
-  enteredAnnualInvestment = '0';
-  enteredExpectedReturn = '5';
-  enteredDuration = '10';
+  enteredInitialInvestment = "0";
+  enteredAnnualInvestment = "0";
+  enteredExpectedReturn = "5";
+  enteredDuration = "10";
 
   onSubmit() {
     this.calculate.emit({
@@ -2030,25 +2030,30 @@ export class UserInputComponent {
   }
 }
 ```
+
 - in the app template
+
 ```html
-...
-<app-user-input (calculate)="calculateInvestment($event)"/>
+... <app-user-input (calculate)="calculateInvestment($event)" />
 ```
+
 - this `$event` is to access the emitted data, that is attached to the emitted custom event output
 
 ### Define an interface for InvestmentInput
+
 - you can put the object definition into a `investment-input.model.ts` file next to app.component
+
 ```ts
 export interface InvestmentInput {
-    initialInvestment: number;
-    annualInvestment: number;
-    expectedReturn: number;
-    duration: number;
-  }
+  initialInvestment: number;
+  annualInvestment: number;
+  expectedReturn: number;
+  duration: number;
+}
 ```
 
 ### Investment results
+
 ```ts
 export class InvestmentResultsComponent {
   @Input() annualData?: AnnualInvestmentData[] = [];
@@ -2067,6 +2072,7 @@ export interface AnnualInvestmentData {
 ```
 
 - the best is to store the result of the calculation in the app component as a property
+
 ```ts
 export class AppComponent {
   private service = inject(InvestmentService);
@@ -2074,19 +2080,23 @@ export class AppComponent {
 ```
 
 - pass it in the app template
+
 ```ts
 <app-investment-results [annualData]="annualData"/>
 ```
+
 - this is a common pattern in angular: one child component (userinput) provides the inputs for the parent
 - the parent calculates/manipulates the data (calculateInvestmentResults)
 - passes the data to another child component (investment results)
+
 ```html
 <app-header />
-<app-user-input (calculate)="calculateInvestment($event)"/>
-<app-investment-results [annualData]="annualData"/>
+<app-user-input (calculate)="calculateInvestment($event)" />
+<app-investment-results [annualData]="annualData" />
 ```
 
 #### Outputting data in the Table
+
 ```html
 <table *ngIf="annualData; else noData">
   <thead>
@@ -2115,7 +2125,9 @@ export class AppComponent {
   <p>No investment data available.</p>
 </ng-template>
 ```
+
 - alternatively with the more modern iteration
+
 ```html
 @if (!annualData) {
 <p class="center">Please enter some values and press "Calculate"</p>
@@ -2145,65 +2157,79 @@ export class AppComponent {
   </tbody>
 </table>
 }
-
 ```
+
 - also import these to use the pipes:
+
 ```ts
-import { CurrencyPipe, DecimalPipe } from 
+import { CurrencyPipe, DecimalPipe } from
 ```
 
 ## Overview of Inputs and Outputs in the first Angular app
+
 ### Component TS files
+
 - `AppComponent`
+
   - nothing, but `selectedUserId?: string;` and `onSelectUser(id: string) {this.selectedUserId = id;}`
 
 - `User`
+
   - user (input)
   - selected (input)
   - select (output)
 
 - `TasksComponent`
+
   - userId (input)
   - name (input)
 
 - `TaskComponent`
+
   - task (input)
 
 - `NewTaskComponent`
   - userId (input)
   - close (output)
 
-  
-
 ### Templates
+
 #### `App` template
-  - for `User`
-  ```html
-        <app-user
-        [user]="user"
-        [selected]="user.id === selectedUserId"
-        (select)="onSelectUser($event)"
-      />
-  ```
-  - TODO where is `onSelectUser` defined? 
-  - for `tasks`
-  ```html
-      <app-tasks [userId]="selectedUser.id" [name]="selectedUser.name"></app-tasks>
-  ```
+
+- for `User`
+
+```html
+<app-user
+  [user]="user"
+  [selected]="user.id === selectedUserId"
+  (select)="onSelectUser($event)"
+/>
+```
+
+- TODO where is `onSelectUser` defined?
+- for `tasks`
+
+```html
+<app-tasks [userId]="selectedUser.id" [name]="selectedUser.name"></app-tasks>
+```
 
 ===================
+
 #### `User` template
+
 ```html
-  <button [class.active]="selected" (click)="onSelectUser()">
+<button [class.active]="selected" (click)="onSelectUser()"></button>
 ```
 
 #### `NewTask` template
+
 - listening for `(click)="onCancel()"` and `(ngSubmit)="onSubmit()"`
   - these methods are defined on `NewTask`
   - `onCancel()` will emit the `close` event
   - the input `userId` is not handled here
 
 #### `Tasks` template
+
 - the `NewTasks` is used here, `userId` is passed to it
 - the `Task` is also used and `task` inputis passed to to it
 
@@ -2212,57 +2238,69 @@ import { CurrencyPipe, DecimalPipe } from
 - `userId` and `name` inputs are not received here: `<app-task [task]="task" />`
 
 #### `App` template
+
 - `Tasks` is used here and `userId` and `name` are passed to it
+
 ```html
 <app-tasks [userId]="selectedUser.id" [name]="selectedUser.name"></app-tasks>
 ```
 
-- `User` is used  here
+- `User` is used here
+
   - `user`, `selected` is passed to it
   - listening for `select` with `onSelectUser`, defined on the `app`
+
   ```html
   <app-user
-        [user]="user"
-        [selected]="user.id === selectedUserId"
-        (select)="onSelectUser($event)"
-      />
+    [user]="user"
+    [selected]="user.id === selectedUserId"
+    (select)="onSelectUser($event)"
+  />
   ```
 
   ### Case study 1: selecting a user
+
   - in `app` template `user` is listening for `select` with `(select)="onSelectUser($event)"`
   - this will set the `selectedUserId` on the `app`, which is used for filtering
   - it needs to receive the `id` from the `user`
   - it passes `user` and `selected` (bool) to user
   - the `select` event is emitted from the `user`
+
   ```ts
   onSelectUser() {
     this.select.emit(this.user.id);
   }
   ```
+
   - there is a `onSelectUser` defined on the `app` too
   - will this be used too?
+
   ```ts
   onSelectUser(id: string) {
     console.log('Selected user with id' + id);
     this.selectedUserId = id;
   }
   ```
+
   - which one is invoked at `app-user` in the app template
+
   ```html
   <app-user
-        [user]="user"
-        [selected]="user.id === selectedUserId"
-        (select)="onSelectUser($event)"
-      />
+    [user]="user"
+    [selected]="user.id === selectedUserId"
+    (select)="onSelectUser($event)"
+  />
   ```
+
   - this is `AppComponent.onSelectUser`
   - the User - `onSelectUser` is listening for a `click` on its own template `(click)="onSelectUser()"`
 
-
 ### Question: Should a child component also listen to an emitted event of a parent component?
+
 Or what is the idiomatic approach there?
 
-In Angular, a `child component typically does not listen to events emitted by its parent component`. Instead, the - parent-to-child communication is usually handled through `@Input` bindings, which allow the parent to pass data or state down to the child. 
+In Angular, a `child component typically does not listen to events emitted by its parent component`. Instead, the - parent-to-child communication is usually handled through `@Input` bindings, which allow the parent to pass data or state down to the child.
+
 - Conversely, child-to-parent communication is handled through `@Output` and EventEmitter, as you've seen.
 
 Angular encourages unidirectional data flow:
@@ -2271,39 +2309,43 @@ Angular encourages unidirectional data flow:
     Child to Parent: Using @Output() and EventEmitter for event emission.
 
 #### Parent Component Template (AppComponent):
+
 <app-user
-  [id]="selectedUserId"
-  [highlight]="isUserHighlighted"
-></app-user>
+[id]="selectedUserId"
+[highlight]="isUserHighlighted"
+
+> </app-user>
 
 Here, the parent is passing two values down to the child:
 
     selectedUserId (which might change based on user actions).
     isUserHighlighted (which controls whether the child user component should be highlighted).
 
-
 Child Component (UserComponent):
+
 ```ts
-import { Input, Component } from '@angular/core';
+import { Input, Component } from "@angular/core";
 
 @Component({
-  selector: 'app-user',
+  selector: "app-user",
   template: `
     <div [class.highlight]="highlight">
       <p>User ID: {{ id }}</p>
     </div>
-  `
+  `,
 })
 export class UserComponent {
   @Input() id!: string;
   @Input() highlight: boolean = false;
 }
 ```
+
 In this case, whenever the parent updates selectedUserId or isUserHighlighted, the child component (UserComponent) receives these updated values via @Input(), and it can react to them as needed.
 
-
 ====================================
+
 ### Using Signals and resetting the form after submission
+
 - Also solve the Investment Calculator with Signals
 
 ```ts
@@ -2317,8 +2359,10 @@ export class AppComponent {
   }
 }
 ```
+
 - this is a stateful data, which when changes would have an impact on the UI
 - so it could be managed by a signal, instead of like this
+
 ```ts
 import { signal } from '@angular/core';
 export class AppComponent {
@@ -2331,30 +2375,36 @@ export class AppComponent {
     }
 }
 ```
+
 - also change, how it how it gets updated, not `=` but `.set()`
 
 - the app template, add `()`
-from
+  from
+
 ```html
-<app-investment-results [annualData]="annualData"/>
+<app-investment-results [annualData]="annualData" />
 ```
+
 to
+
 ```html
-<app-investment-results [annualData]="annualData()"/>
+<app-investment-results [annualData]="annualData()" />
 ```
 
 #### Signals for the user input components too
+
 - two-way binding
 
 from
+
 ```ts
 export class UserInputComponent {
   @Output() calculate = new EventEmitter<InvestmentInput>();
 
-  enteredInitialInvestment = '0';
-  enteredAnnualInvestment = '0';
-  enteredExpectedReturn = '5';
-  enteredDuration = '10';
+  enteredInitialInvestment = "0";
+  enteredAnnualInvestment = "0";
+  enteredExpectedReturn = "5";
+  enteredDuration = "10";
 
   onSubmit() {
     this.calculate.emit({
@@ -2366,6 +2416,7 @@ export class UserInputComponent {
   }
 }
 ```
+
 to
 
 ```ts
@@ -2379,16 +2430,19 @@ export class UserInputComponent {
 ```
 
 - you dont need to call them in the template with `()`, ngModel is accepting Signals as well, reads them and sets up a subscription for the
+
 ```html
 <label for="duration">Duration</label>
-      <input
-        type="number"
-        id="duration"
-        name="duration"
-        [(ngModel)]="enteredDuration"
-      />
+<input
+  type="number"
+  id="duration"
+  name="duration"
+  [(ngModel)]="enteredDuration"
+/>
 ```
+
 - However, `onSubmit` need to emit the values of the signals and not the signals, so we read the signals by calling them
+
 ```ts
   onSubmit() {
     this.calculate.emit({
@@ -2402,37 +2456,46 @@ export class UserInputComponent {
 ```
 
 - also instead of the `@Output` decorator, you could use the `output` function
+
 ```ts
   @Output() calculate = new EventEmitter<InvestmentInput>();
 ```
-to
-```ts
-  calculate = output<InvestmentInput>();
 
+to
+
+```ts
+calculate = output<InvestmentInput>();
 ```
 
 - also from this
+
 ```ts
 export class InvestmentResultsComponent {
   @Input() annualData?: AnnualInvestmentData[];
 }
 ```
+
 to
+
 ```ts
 export class InvestmentResultsComponent {
-  annualData = input <AnnualInvestmentData[]>();
+  annualData = input<AnnualInvestmentData[]>();
 }
 ```
+
 and in the template call the signal to read it and set up the subscription
+
 ```html
 @if (!annualData()) {
 
-
 <tbody>
-    @for (annualD of annualData(); track annualD.year) {
-    <tr>
+  @for (annualD of annualData(); track annualD.year) {
+  <tr></tr>
+</tbody>
 ```
+
 #### Reset the input values
+
 ```ts
 export class UserInputComponent {
   ...
@@ -2451,21 +2514,24 @@ export class UserInputComponent {
 ```
 
 ### Using a Service for cross-component communication
+
 - I primarily just put a function into the service from the app component, but already the userInput could put the input to it and the results could get it from there
 
 - this is still using the classic paradigm of: userInput -> appComponent -> resultsComponent
 
-
 - the service
+
 ```ts
+
 ```
 
 from this
+
 ```ts
 @Component({
-  selector: 'app-root',
+  selector: "app-root",
   standalone: true,
-  templateUrl: './app.component.html',
+  templateUrl: "./app.component.html",
   imports: [HeaderComponent, UserInputComponent, InvestmentResultsComponent],
 })
 export class AppComponent {
@@ -2474,25 +2540,30 @@ export class AppComponent {
   annualData = signal<AnnualInvestmentData[] | undefined>(undefined);
 
   calculateInvestment(investmentInput: InvestmentInput) {
-    this.annualData.set(this.service.calculateInvestmentResults(investmentInput));
+    this.annualData.set(
+      this.service.calculateInvestmentResults(investmentInput)
+    );
     console.log(`annualData on app component: ${this.annualData}`);
   }
 }
 ```
+
 to
+
 ```ts
 @Component({
-  selector: 'app-root',
+  selector: "app-root",
   standalone: true,
-  templateUrl: './app.component.html',
+  templateUrl: "./app.component.html",
   imports: [HeaderComponent, UserInputComponent, InvestmentResultsComponent],
 })
 export class AppComponent {}
 ```
 
 - the service
+
 ```ts
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: "root" })
 export class InvestmentService {
   resultsData?: AnnualInvestmentData[];
   calculateInvestmentResults(investmentInput: InvestmentInput) {
@@ -2530,12 +2601,13 @@ export class InvestmentService {
   - don't output the InvestmentInput to the usercomponent
   - remove `calculate = output<InvestmentInput>();`
   - dont just emit in onSubmit
-  - make service available 
+  - make service available
+
 ```ts
 export class UserInputComponent {
   // remove this
   // calculate = output<InvestmentInput>();
-  
+
   // make service available
   constructor(private investmentService: InvestmentService) {}
 
@@ -2564,10 +2636,11 @@ export class UserInputComponent {
   - remove the `input`
   - inject the service
   - access the calculation result from the service
+
 ```ts
 export class InvestmentResultsComponent {
   constructor(private investmentService: InvestmentService) {}
-  
+
   // remove
   annualData = input <AnnualInvestmentData[]>();
   annualData = this.investmentService.
@@ -2585,20 +2658,20 @@ export class InvestmentResultsComponent {
 
 ```html
 <app-header />
-<app-user-input (calculate)="calculateInvestment($event)"/>
-<app-investment-results [annualData]="annualData()"/>
+<app-user-input (calculate)="calculateInvestment($event)" />
+<app-investment-results [annualData]="annualData()" />
 ```
 
 ```html
-+<app-user-input/>
-+<app-investment-results/>
++<app-user-input /> +<app-investment-results />
 ```
 
 - with this it is not input -> app -> results, but the input uses the service to calculate and put data into the service, the results just to get the calculated results
 
-
 ### Using Signals in Services
+
 from
+
 ```ts
 @Injectable({ providedIn: 'root' })
 export class InvestmentService {
@@ -2607,7 +2680,9 @@ export class InvestmentService {
   this.resultsData = annualData;
 }
 ```
+
 to
+
 ```ts
 @Injectable({ providedIn: 'root' })
 export class InvestmentService {
@@ -2616,25 +2691,496 @@ export class InvestmentService {
   this.resultsData.set(annualData);
 }
 ```
+
 - in the template it has to be called to get the value of the signal and set up the subsciprtion
 
 - also you can setup a computed value instead a getter to make it read-only, and not change accidentally the value
-from
+  from
+
 ```ts
 export class InvestmentResultsComponent {
- ... 
+ ...
   get results() {
     return this.investmentService.resultsData;
   }
 ```
+
 to
+
 ```ts
 export class InvestmentResultsComponent {
- ... 
+ ...
   results = computed(() => this.investmentService.resultsData());
 ```
 
 - alternatively, this also provides a read-only version of the signal
+
 ```ts
-results = this.investmentService.resultsData.asReadonly()
+results = this.investmentService.resultsData.asReadonly();
+```
+
+## Debugging
+
+```sh
+❯ ng serve
+Application bundle generation failed. [2.547 seconds]
+
+✘ [ERROR] NG2: Type '{ id: string; name: string; avatar: string; }' is not assignable to type 'string'. [plugin angular-compiler]
+
+    src/app/app.component.html:13:16:
+      13 │     <app-tasks [userId]="selectedUser" [name]="selectedUser.name" />
+         ╵                 ~~~~~~
+
+  Error occurs in the template of component AppComponent.
+
+    src/app/app.component.ts:11:17:
+      11 │     templateUrl: './app.component.html',
+         ╵                  ~~~~~~~~~~~~~~~~~~~~~~
+```
+
+- use the source debugger of the browser for logical errors
+- also worth to use the Angular DevTools extension in Chrome
+
+## Deep-dive into components and templates
+
+### Splitting a component into multiple templates
+
+- to create a component inside a folder, for better structure
+  `ng g c dashboard/server-status --skip-tests`
+
+### Create reusable components
+
+- `ng g c dashboard/dashboard-item --skip-tests`
+- from
+
+```html
+<article>
+  <header>
+    <img src="status.png" alt="A signal symbol" />
+    <h2>Server Status</h2>
+  </header>
+  <div>...</div>
+</article>
+```
+
+- and from
+
+```html
+<app-header />
+<main>
+  <div id="dashboard">
+    <div class="dashboard-item">
+      <app-server-status />
+    </div>
+    <div class="dashboard-item">
+      <app-traffic />
+    </div>
+    <div class="dashboard-item">
+      <app-tickets />
+    </div>
+  </div>
+</main>
+```
+
+to
+
+- dashboard-item
+```html
+<div class="dashboard-item">
+  <article>
+    <header>
+      <img [src]="image().src" [alt]="image().alt" />
+      <h2>{{ title() }}</h2>
+    </header>
+  </article>
+</div>
+```
+
+```html
+<app-header />
+<main>
+  <div id="dashboard">
+    <app-dashboard-item
+      [image]="{ src: 'status.png', alt: 'A signal symbol' }"
+      title="Server status"
+    >
+      <app-server-status />
+    </app-dashboard-item>
+    <app-dashboard-item
+      [image]="{ src: 'globe.png', alt: 'A globe' }"
+      title="Traffic"
+    >
+      <app-traffic />
+    </app-dashboard-item>
+    <app-dashboard-item
+    [image]="{ src: 'list.png', alt: 'A list of items' }"
+      title="Support Tickets"
+    >
+      <app-tickets />
+    </app-dashboard-item>
+  </div>
+</main>
+```
+
+#### Property Binding Revisited
+
+- image expects an object
+- so we need to set up property-binding with `[image]=` and between the double-quotes some dynamically evaluated TS expression `"{ src: 'status.png', alt: 'A signal symbol' }"`, set up an object here, evaluated as object and not as text
+- for title we don't need property-binding
+  - the square-brackets wrapped around a property would tell to evaluate as TS code, but we need just a plain string
+  - `[title]="A signal symbol"` would try to evaluate `A signal symbol` as TS syntax
+  - so we go with either `[title]="'A signal symbol'"`
+  - or even simpler `title="A signal symbol"`
+
+```ts
+export class DashboardItemComponent {
+  image = input.required<{ src: string; alt: string }>();
+  title = input.required<string>();
+}
+```
+
+```html
+<app-dashboard-item
+  [image]="{ src: 'status.png', alt: 'photo' }"
+  title="A signal symbol"
+></app-dashboard-item>
+```
+
+#### Using content projection and ng-content
+
+- put `ng-content` element into the template
+
+```html
+<div class="dashboard-item">
+  <article>
+    <header>
+      <img [src]="image().src" [alt]="image().alt" />
+      <h2>{{ title() }}</h2>
+    </header>
+    <ng-content />
+  </article>
+</div>
+```
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap");
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: "Open Sans", sans-serif;
+}
+
+body {
+  margin: 0;
+  background-color: #c0bdc3;
+}
+
+main {
+  width: 80%;
+  margin: 3rem 10%;
+}
+
+header {
+  padding: 0.75rem 0.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1rem;
+}
+
+#logo {
+  width: 5.5rem;
+  height: 5.5rem;
+  background-color: #eee8f2;
+  padding: 1.25rem;
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.35);
+}
+
+#logo img {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 4px rgba(29, 29, 29, 0.35));
+}
+
+nav ul {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+}
+
+nav ul li a {
+  color: #3e3b3e;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+nav ul li a:hover {
+  color: #77207a;
+}
+
+@media (min-width: 768px) {
+  header {
+    font-size: 1.25rem;
+    flex-direction: row;
+    gap: 0;
+    padding: 1.5rem 10%;
+  }
+}
+
+#dashboard {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  max-width: 85rem;
+}
+
+@media (min-width: 768px) {
+  #dashboard {
+    flex-direction: row;
+  }
+}
+
+#traffic {
+  display: block;
+  width: 15rem;
+}
+
+p {
+  margin: 0 0 1rem 0;
+  font-size: 0.9rem;
+  color: #4f4b53;
+}
+
+#chart {
+  height: 10rem;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+  padding: 0 0.5rem;
+  border-bottom: 1px solid #76737a;
+}
+
+#chart div {
+  flex: 1;
+  background: linear-gradient(to bottom, #36166f, #ca19a4);
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+}
+
+@media (min-width: 768px) {
+  #traffic {
+    width: 20rem;
+  }
+}
+
+#status {
+  display: block;
+  width: 15rem;
+}
+
+.status p:first-of-type {
+  font-weight: bold;
+  animation: pulse 2s infinite;
+  margin: 0 0 0.5rem 0;
+  font-size: 1.15rem;
+}
+
+.status-online p:first-of-type {
+  color: #6a3cb0;
+}
+
+.status-offline p:first-of-type {
+  color: #b22084;
+}
+
+.status-unknown p:first-of-type {
+  color: grey;
+}
+
+p:last-of-type {
+  margin: 0;
+  color: #625e67;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.dashboard-item {
+  display: block;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #f8f8f8;
+  box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.2);
+}
+
+.dashboard-item header {
+  display: flex;
+  padding: 0;
+  gap: 0.75rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.dashboard-item header img {
+  width: 1.5rem;
+  height: 1.5rem;
+  object-fit: contain;
+}
+
+h2 {
+  margin: 0;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  color: #504e50;
+}
+
+@media (min-width: 768px) {
+  .dashboard-item {
+    padding: 2rem;
+  }
+}
+
+button {
+  display: inline-block;
+  padding: 0.65rem 1.35rem;
+  border-radius: 0.25rem;
+  font-size: 1rem;
+  text-align: center;
+  cursor: pointer;
+  background-color: #691ebe;
+  color: white;
+  border: none;
+}
+
+button:hover {
+  background-color: #551b98;
+}
+
+.icon {
+  display: inline-block;
+  margin-left: 0.5rem;
+  transition: transform 0.2s ease-in-out;
+}
+
+button:hover .icon {
+  transform: translateX(4px);
+}
+
+
+#### Adding forms to components
+- now just remove the refactored parts from the `ticket`, `traffic`, ... components
+
+- `ng g c dashboard/tickets/new-ticket --skip-tests`
+- `ng g c dashboard/tickets/ticket --skip-tests`
+
+- new-ticket, add some form
+```html
+<form>
+  <p>
+    <label>Title</label>
+    <input name="title" id="title" />
+  </p>
+  <p>
+    <label>Request</label>
+    <textarea name="title" id="title" rows="3"></textarea>
+  </p>
+  <p>
+    <button>
+      <span> Submit </span>
+      <span class="icon"> |> </span>
+    </button>
+  </p>
+</form>
+```
+
+- tickets.html
+```html
+<div id="new-ticket">
+  <app-new-ticket/>
+</div>
+```
+- displays some form
+- update the apps styles
+
+#### Extending built-in components
+- create a "shared" folder
+`ng g c shared/button --skip-tests`
+
+- we could put the button like this here:
+```html
+    <button>
+      <span> Submit </span>
+      <span class="icon"> |> </span>
+    </button>
+```
+- if we now use the `app-button` in other components, we end up with 
+```html
+<app-button>
+  <button>
+<app-button/>
+```
+- we can make the DOM leaner
+- if you just want to extend a built-in component, like the button, there is this approach with "attibute selectors"
+
+#### Extending built-in components with attribute selectors
+- instead of this
+```html
+<button>
+  <span> Submit </span>
+  <span class="icon"> |> </span>
+</button>
+```
+
+- just focus on the content:
+```html
+<span> Submit </span>
+<span class="icon"> |> </span>
+```
+
+- and change its selector from `selector: 'app-button',` to `selector: 'button[appButton]',` to extend the built-in button
+```ts
+@Component({
+  selector: 'button[appButton]',
+  standalone: true,
+  imports: [],
+  templateUrl: './button.component.html',
+  styleUrl: './button.component.css'
+})
+export class ButtonComponent {
+
+}
+```
+
+- to use it: `<button>` -> `<button appButton>`
+- also import `ButtonComponent`, otherwise it fails silently 
+```html
+        <li>
+          <button>
+            <span>
+              Logout
+            </span>
+            <span class="icon">
+              →
+            </span>
+          </button>
+        </li>
 ```
