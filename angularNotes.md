@@ -3184,3 +3184,46 @@ export class ButtonComponent {
           </button>
         </li>
 ```
+
+#### Supporting Content Projection with Multiple Slots
+- this is now hardcoded in the button
+```html
+<span> Submit </span>
+<span class="icon"> |> </span>
+```
+
+- we could accept an input for text, another for the icon
+
+- alternatively, use `ng-content`
+```html
+<span> 
+  <ng-content/>
+</span>
+<span class="icon">
+  <ng-content/>
+</span>
+```
+- now where the button is used, like at header
+```html
+        <li>
+          <button appButton>
+              Logout →
+          </button>
+        </li>
+```
+- this now buts both "Logout" and the icon in the second span text, the first is empty
+
+- add a CSS-selector to specify
+```html
+  <ng-content/>
+  <ng-content select=".icon"/>
+```
+- where we use it
+```html
+  <li>
+    <button appButton>
+        Logout 
+        <span class="icon">→</span>
+    </button>
+  </li>
+```
