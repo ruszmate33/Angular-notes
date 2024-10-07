@@ -3227,3 +3227,80 @@ export class ButtonComponent {
     </button>
   </li>
 ```
+
+#### Exploring Advanced Content Projection
+- if we dont want this icon class wrapped in a span
+```html
+        <li>
+          <button appButton>
+              Logout 
+              <span class="icon">→</span>
+          </button>
+        </li>
+```
+from 
+```html
+<ng-content/>
+<ng-content select=".icon"/>
+```
+to
+```html
+<ng-content/>
+<span class="icon">
+  <ng-content select=".icon"/>
+</span>
+```
+
+but this creates two html elements with icon class
+
+
+so rather ngProjectAs="icon", not ngProjectAs=".icon"
+```html
+        <li>
+          <button appButton>
+              Logout 
+              <span ngProjectAs="icon">→</span>
+          </button>
+        </li>
+```
+in the button select for this `icon` instead of `.icon`, use `<ng-content select="icon" />`
+```html
+<span>
+  <ng-content />
+</span>
+<span class="icon">
+  <ng-content select="icon" />
+</span>
+```
+
+- on the ticket compoent
+```html
+  <p>
+    <button appButton>
+      Submit
+      <span class="icon">|></span>
+    </button>
+  </p>
+```
+to
+```html
+  <p>
+    <button appButton>
+      Submit
+      <span ngProjectAs="icon">|></span>
+    </button>
+  </p>
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
