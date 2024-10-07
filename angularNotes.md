@@ -2785,6 +2785,7 @@ Application bundle generation failed. [2.547 seconds]
 to
 
 - dashboard-item
+
 ```html
 <div class="dashboard-item">
   <article>
@@ -2813,7 +2814,7 @@ to
       <app-traffic />
     </app-dashboard-item>
     <app-dashboard-item
-    [image]="{ src: 'list.png', alt: 'A list of items' }"
+      [image]="{ src: 'list.png', alt: 'A list of items' }"
       title="Support Tickets"
     >
       <app-tickets />
@@ -2861,238 +2862,240 @@ export class DashboardItemComponent {
   </article>
 </div>
 ```
+
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap");
 
-* {
+- {
   box-sizing: border-box;
-}
+  }
 
 html {
-  font-family: "Open Sans", sans-serif;
+font-family: "Open Sans", sans-serif;
 }
 
 body {
-  margin: 0;
-  background-color: #c0bdc3;
+margin: 0;
+background-color: #c0bdc3;
 }
 
 main {
-  width: 80%;
-  margin: 3rem 10%;
+width: 80%;
+margin: 3rem 10%;
 }
 
 header {
-  padding: 0.75rem 0.1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 1rem;
+padding: 0.75rem 0.1rem;
+display: flex;
+flex-direction: column;
+gap: 1rem;
+justify-content: space-between;
+align-items: center;
+font-size: 1rem;
 }
 
 #logo {
-  width: 5.5rem;
-  height: 5.5rem;
-  background-color: #eee8f2;
-  padding: 1.25rem;
-  border-radius: 50%;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.35);
+width: 5.5rem;
+height: 5.5rem;
+background-color: #eee8f2;
+padding: 1.25rem;
+border-radius: 50%;
+box-shadow: 0 0 8px rgba(0, 0, 0, 0.35);
 }
 
 #logo img {
-  width: 100%;
-  height: 100%;
-  filter: drop-shadow(0 0 4px rgba(29, 29, 29, 0.35));
+width: 100%;
+height: 100%;
+filter: drop-shadow(0 0 4px rgba(29, 29, 29, 0.35));
 }
 
 nav ul {
-  display: flex;
-  gap: 2rem;
-  list-style: none;
-  align-items: center;
-  padding: 0;
-  margin: 0;
+display: flex;
+gap: 2rem;
+list-style: none;
+align-items: center;
+padding: 0;
+margin: 0;
 }
 
 nav ul li a {
-  color: #3e3b3e;
-  text-decoration: none;
-  font-weight: bold;
+color: #3e3b3e;
+text-decoration: none;
+font-weight: bold;
 }
 
 nav ul li a:hover {
-  color: #77207a;
+color: #77207a;
 }
 
 @media (min-width: 768px) {
-  header {
-    font-size: 1.25rem;
-    flex-direction: row;
-    gap: 0;
-    padding: 1.5rem 10%;
-  }
+header {
+font-size: 1.25rem;
+flex-direction: row;
+gap: 0;
+padding: 1.5rem 10%;
+}
 }
 
 #dashboard {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1.5rem;
-  max-width: 85rem;
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+justify-content: space-between;
+gap: 1.5rem;
+max-width: 85rem;
 }
 
 @media (min-width: 768px) {
-  #dashboard {
-    flex-direction: row;
-  }
+#dashboard {
+flex-direction: row;
+}
 }
 
 #traffic {
-  display: block;
-  width: 15rem;
+display: block;
+width: 15rem;
 }
 
 p {
-  margin: 0 0 1rem 0;
-  font-size: 0.9rem;
-  color: #4f4b53;
+margin: 0 0 1rem 0;
+font-size: 0.9rem;
+color: #4f4b53;
 }
 
 #chart {
-  height: 10rem;
-  display: flex;
-  align-items: flex-end;
-  gap: 0.5rem;
-  padding: 0 0.5rem;
-  border-bottom: 1px solid #76737a;
+height: 10rem;
+display: flex;
+align-items: flex-end;
+gap: 0.5rem;
+padding: 0 0.5rem;
+border-bottom: 1px solid #76737a;
 }
 
 #chart div {
-  flex: 1;
-  background: linear-gradient(to bottom, #36166f, #ca19a4);
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
+flex: 1;
+background: linear-gradient(to bottom, #36166f, #ca19a4);
+border-top-left-radius: 4px;
+border-top-right-radius: 4px;
 }
 
 @media (min-width: 768px) {
-  #traffic {
-    width: 20rem;
-  }
+#traffic {
+width: 20rem;
+}
 }
 
 #status {
-  display: block;
-  width: 15rem;
+display: block;
+width: 15rem;
 }
 
 .status p:first-of-type {
-  font-weight: bold;
-  animation: pulse 2s infinite;
-  margin: 0 0 0.5rem 0;
-  font-size: 1.15rem;
+font-weight: bold;
+animation: pulse 2s infinite;
+margin: 0 0 0.5rem 0;
+font-size: 1.15rem;
 }
 
 .status-online p:first-of-type {
-  color: #6a3cb0;
+color: #6a3cb0;
 }
 
 .status-offline p:first-of-type {
-  color: #b22084;
+color: #b22084;
 }
 
 .status-unknown p:first-of-type {
-  color: grey;
+color: grey;
 }
 
 p:last-of-type {
-  margin: 0;
-  color: #625e67;
+margin: 0;
+color: #625e67;
 }
 
 @keyframes pulse {
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-  100% {
-    opacity: 1;
-  }
+0% {
+opacity: 1;
+}
+50% {
+opacity: 0.5;
+}
+100% {
+opacity: 1;
+}
 }
 
 .dashboard-item {
-  display: block;
-  padding: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  background-color: #f8f8f8;
-  box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.2);
+display: block;
+padding: 1rem;
+border: 1px solid #ccc;
+border-radius: 6px;
+background-color: #f8f8f8;
+box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.2);
 }
 
 .dashboard-item header {
-  display: flex;
-  padding: 0;
-  gap: 0.75rem;
-  align-items: center;
-  margin-bottom: 1rem;
+display: flex;
+padding: 0;
+gap: 0.75rem;
+align-items: center;
+margin-bottom: 1rem;
 }
 
 .dashboard-item header img {
-  width: 1.5rem;
-  height: 1.5rem;
-  object-fit: contain;
+width: 1.5rem;
+height: 1.5rem;
+object-fit: contain;
 }
 
 h2 {
-  margin: 0;
-  font-size: 0.9rem;
-  text-transform: uppercase;
-  color: #504e50;
+margin: 0;
+font-size: 0.9rem;
+text-transform: uppercase;
+color: #504e50;
 }
 
 @media (min-width: 768px) {
-  .dashboard-item {
-    padding: 2rem;
-  }
+.dashboard-item {
+padding: 2rem;
+}
 }
 
 button {
-  display: inline-block;
-  padding: 0.65rem 1.35rem;
-  border-radius: 0.25rem;
-  font-size: 1rem;
-  text-align: center;
-  cursor: pointer;
-  background-color: #691ebe;
-  color: white;
-  border: none;
+display: inline-block;
+padding: 0.65rem 1.35rem;
+border-radius: 0.25rem;
+font-size: 1rem;
+text-align: center;
+cursor: pointer;
+background-color: #691ebe;
+color: white;
+border: none;
 }
 
 button:hover {
-  background-color: #551b98;
+background-color: #551b98;
 }
 
 .icon {
-  display: inline-block;
-  margin-left: 0.5rem;
-  transition: transform 0.2s ease-in-out;
+display: inline-block;
+margin-left: 0.5rem;
+transition: transform 0.2s ease-in-out;
 }
 
 button:hover .icon {
-  transform: translateX(4px);
+transform: translateX(4px);
 }
 
-
 #### Adding forms to components
+
 - now just remove the refactored parts from the `ticket`, `traffic`, ... components
 
 - `ng g c dashboard/tickets/new-ticket --skip-tests`
 - `ng g c dashboard/tickets/ticket --skip-tests`
 
 - new-ticket, add some form
+
 ```html
 <form>
   <p>
@@ -3113,36 +3116,46 @@ button:hover .icon {
 ```
 
 - tickets.html
+
 ```html
 <div id="new-ticket">
-  <app-new-ticket/>
+  <app-new-ticket />
 </div>
 ```
+
 - displays some form
 - update the apps styles
 
 #### Extending built-in components
+
 - create a "shared" folder
-`ng g c shared/button --skip-tests`
+  `ng g c shared/button --skip-tests`
 
 - we could put the button like this here:
+
 ```html
-    <button>
-      <span> Submit </span>
-      <span class="icon"> |> </span>
-    </button>
+<button>
+  <span> Submit </span>
+  <span class="icon"> |> </span>
+</button>
 ```
-- if we now use the `app-button` in other components, we end up with 
+
+- if we now use the `app-button` in other components, we end up with
+
 ```html
 <app-button>
   <button>
-<app-button/>
+    <app-button /></button
+></app-button>
 ```
+
 - we can make the DOM leaner
 - if you just want to extend a built-in component, like the button, there is this approach with "attibute selectors"
 
 #### Extending built-in components with attribute selectors
+
 - instead of this
+
 ```html
 <button>
   <span> Submit </span>
@@ -3151,119 +3164,127 @@ button:hover .icon {
 ```
 
 - just focus on the content:
+
 ```html
-<span> Submit </span>
-<span class="icon"> |> </span>
+<span> Submit </span> <span class="icon"> |> </span>
 ```
 
 - and change its selector from `selector: 'app-button',` to `selector: 'button[appButton]',` to extend the built-in button
+
 ```ts
 @Component({
-  selector: 'button[appButton]',
+  selector: "button[appButton]",
   standalone: true,
   imports: [],
-  templateUrl: './button.component.html',
-  styleUrl: './button.component.css'
+  templateUrl: "./button.component.html",
+  styleUrl: "./button.component.css",
 })
-export class ButtonComponent {
-
-}
+export class ButtonComponent {}
 ```
 
 - to use it: `<button>` -> `<button appButton>`
-- also import `ButtonComponent`, otherwise it fails silently 
+- also import `ButtonComponent`, otherwise it fails silently
+
 ```html
-        <li>
-          <button>
-            <span>
-              Logout
-            </span>
-            <span class="icon">
-              →
-            </span>
-          </button>
-        </li>
+<li>
+  <button>
+    <span> Logout </span>
+    <span class="icon"> → </span>
+  </button>
+</li>
 ```
 
 #### Supporting Content Projection with Multiple Slots
+
 - this is now hardcoded in the button
+
 ```html
-<span> Submit </span>
-<span class="icon"> |> </span>
+<span> Submit </span> <span class="icon"> |> </span>
 ```
 
 - we could accept an input for text, another for the icon
 
 - alternatively, use `ng-content`
+
 ```html
-<span> 
-  <ng-content/>
+<span>
+  <ng-content />
 </span>
 <span class="icon">
-  <ng-content/>
+  <ng-content />
 </span>
 ```
+
 - now where the button is used, like at header
+
 ```html
-        <li>
-          <button appButton>
-              Logout →
-          </button>
-        </li>
+<li>
+  <button appButton>Logout →</button>
+</li>
 ```
+
 - this now buts both "Logout" and the icon in the second span text, the first is empty
 
 - add a CSS-selector to specify
+
 ```html
-  <ng-content/>
-  <ng-content select=".icon"/>
+<ng-content /> <ng-content select=".icon" />
 ```
+
 - where we use it
+
 ```html
-  <li>
-    <button appButton>
-        Logout 
-        <span class="icon">→</span>
-    </button>
-  </li>
+<li>
+  <button appButton>
+    Logout
+    <span class="icon">→</span>
+  </button>
+</li>
 ```
 
 #### Exploring Advanced Content Projection
+
 - if we dont want this icon class wrapped in a span
+
 ```html
-        <li>
-          <button appButton>
-              Logout 
-              <span class="icon">→</span>
-          </button>
-        </li>
+<li>
+  <button appButton>
+    Logout
+    <span class="icon">→</span>
+  </button>
+</li>
 ```
-from 
+
+from
+
 ```html
-<ng-content/>
-<ng-content select=".icon"/>
+<ng-content /> <ng-content select=".icon" />
 ```
+
 to
+
 ```html
-<ng-content/>
+<ng-content />
 <span class="icon">
-  <ng-content select=".icon"/>
+  <ng-content select=".icon" />
 </span>
 ```
 
 but this creates two html elements with icon class
 
-
 so rather ngProjectAs="icon", not ngProjectAs=".icon"
+
 ```html
-        <li>
-          <button appButton>
-              Logout 
-              <span ngProjectAs="icon">→</span>
-          </button>
-        </li>
+<li>
+  <button appButton>
+    Logout
+    <span ngProjectAs="icon">→</span>
+  </button>
+</li>
 ```
+
 in the button select for this `icon` instead of `.icon`, use `<ng-content select="icon" />`
+
 ```html
 <span>
   <ng-content />
@@ -3274,33 +3295,56 @@ in the button select for this `icon` instead of `.icon`, use `<ng-content select
 ```
 
 - on the ticket compoent
+
 ```html
-  <p>
-    <button appButton>
-      Submit
-      <span class="icon">|></span>
-    </button>
-  </p>
+<p>
+  <button appButton>
+    Submit
+    <span class="icon">|></span>
+  </button>
+</p>
 ```
+
 to
+
 ```html
-  <p>
-    <button appButton>
-      Submit
-      <span ngProjectAs="icon">|></span>
-    </button>
-  </p>
+<p>
+  <button appButton>
+    Submit
+    <span ngProjectAs="icon">|></span>
+  </button>
+</p>
 ```
 
+#### Defining Content Projection Fallbacks
 
+- from `button`
 
+```html
+<span class="icon">
+  <ng-content select="icon" />
+</span>
+```
 
+- to use a fallback icon if no icon is defined, wrap ng-content around that fallback
 
+```html
+<ng-content select="icon"> -> </ng-content>
+```
 
+- eg. if you were to remove in `header`
 
+```html
+<button appButton>
+  Logout
+  <span ngProjectAs="icon">→</span>
+</button>
+```
 
+- with this it uses the fallback
 
-
-
-
-
+```html
+<button appButton>
+  Logout
+</button>
+```
