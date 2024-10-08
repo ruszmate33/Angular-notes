@@ -3348,3 +3348,74 @@ to
   Logout
 </button>
 ```
+
+
+#### Multi-element Custom Components & Content Projection
+- create a `control` component
+- we move a part of the form there
+```html
+  <p>
+    <label>Title</label>
+    <input name="title" id="title" />
+  </p>
+```
+- set it from the outside
+```ts
+export class ControlComponent {
+  label = input.required<string>();
+}
+```
+
+```html
+<p>
+  <label>{{ label() }}</label>
+  <input name="title" id="title" />
+</p>
+```
+
+- be more retrictive with `select` to make it selective what can be projected into this
+```html
+<p>
+  <label>{{ label() }}</label>
+  <ng-content select="input, textarea"></ng-content>
+</p>
+```
+
+- use the `control` component
+from this
+```html
+  <p>
+    <label>Title</label>
+    <input name="title" id="title" />
+  </p>
+```
+to
+```html
+  <app-control label="Title">
+    <input name="title" id="title" />
+  </app-control>
+```
+
+and from
+```html
+  <p>
+    <label>Request</label>
+    <textarea name="title" id="title" rows="3"></textarea>
+  </p>
+```
+to
+```html
+  <app-control label="Request">
+    <textarea name="title" id="title" rows="3"></textarea>
+  </app-control>
+```
+
+
+
+
+
+
+
+
+
+
