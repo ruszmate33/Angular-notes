@@ -3497,3 +3497,74 @@ to
 ```
 - this allows you to apply styles to the rendered host element
 - also `button:hover` -> `:host:hover`
+
+#### Using Host elemets as Reusable elements
+- we have this rendered
+```html
+<app-control>
+  <p class="control">
+```
+because in the template
+```html
+<p class="control">
+  <label>{{ label() }}</label>
+  <ng-content select="input, textarea"></ng-content>
+</p>
+```
+- we dont this nesting
+- also in the css we are
+```css
+.control label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-bottom: 0.15rem;
+    color: #4f4b53;
+  }
+  
+  .control input,
+  .control textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font: inherit;
+    font-size: 0.9rem;
+    color: #4f4b53;
+  }
+```
+
+- removing the `<p class="control">` makes the styles broken, because in the css we look for .control class
+```html
+<p class="control">
+  <label>{{ label() }}</label>
+  <ng-content select="input, textarea"></ng-content>
+</p>
+```
+to
+```html
+<label>{{ label() }}</label>
+<ng-content select="input, textarea"></ng-content>
+```
+
+- adding `:host` selector to the css wont help because we disabled view-encapsulation with `ViewEncapsulation.ShadowDom`
+- the component still has the `app-control` host element in the DOM
+- but the :host css selector wont work: the css styles of this component are no longer scoped to this component, they are applied as global styles
+- `:host` css selector will not work with `ViewEncapsulation.ShadowDom`
+
+- we could add the `control` class where the `app-control` is used like in new-ticket
+
+from
+```html
+<form>
+  <app-control label="Title">
+    <input name="title" id="title" />
+  </app-control>
+```
+to
+```html
+<form>
+  <app-control class="control" label="Title">
+    <input name="title" id="title" />
+  </app-control>
+```
