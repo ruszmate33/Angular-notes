@@ -3412,10 +3412,88 @@ to
 
 
 
+#### Understanding & Configuring View Encapsulation
+
+- sometimes you need to disable style encapsulation, to use the global styles for the component
+- eg. you want to use the style of a button elsewhere
+
+- the form style is broken inside control
+```css
+.control label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-bottom: 0.15rem;
+    color: #4f4b53;
+  }
+  
+  .control input,
+  .control textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font: inherit;
+    font-size: 0.9rem;
+    color: #4f4b53;
+  }
+```
+
+- in the control compoentn html file add the "control" css class
+```html
+<p class="control">
+  <label>{{ label() }}</label>
+  <ng-content select="input, textarea"></ng-content>
+</p>
+```
+
+- Angular only sees the placeholder `ng-content` inside the component now, not the `input` and `ng-content` that might end up inside it
+
+- diable the scoping of the styling
+
+```ts
+@Component({
+  selector: 'app-control',
+  standalone: true,
+  imports: [],
+  templateUrl: './control.component.html',
+  styleUrl: './control.component.css',
+  encapsulation: ViewEncapsulation.None
+})
+export class ControlComponent {
+  label = input.required<string>();
+}
+```
+
+- the default is `ViewEncapsulation.ShadowDom`
 
 
+#### Component host elements
 
+- the button is still broken
+- every Angular component has a "Host Element", which is the element, that is selected by the selector
+- eg.: `control` component -> `app-control`
+- this renders
+```html
+<app-control>
+  <p class="control">
+```
 
-
-
-
+- for the button: selector: 'button[appButton]', so this is its host element
+- in the "button" css you can target this with
+from
+```css
+button {
+  display: inline-block
+  ...
+}
+```
+to
+```css
+:host {
+  display: inline-block
+  ...
+}
+```
+- this allows you to apply styles to the rendered host element
+- also `button:hover` -> `:host:hover`
