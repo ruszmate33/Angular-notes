@@ -3550,7 +3550,7 @@ to
 - adding `:host` selector to the css wont help because we disabled view-encapsulation with `ViewEncapsulation.ShadowDom`
 - the component still has the `app-control` host element in the DOM
 - but the :host css selector wont work: the css styles of this component are no longer scoped to this component, they are applied as global styles
-- `:host` css selector will not work with `ViewEncapsulation.ShadowDom`
+- `:host` css selector will not work with `ViewEncapsulation.None`
 
 - we could add the `control` class where the `app-control` is used like in new-ticket
 
@@ -3568,3 +3568,24 @@ to
     <input name="title" id="title" />
   </app-control>
 ```
+
+#### Interacting with host elements from inside components
+- now we need to add `class="control"` everywhere where `app-control` occurs
+- add it once at the component class
+```ts
+@Component({
+  selector: 'app-control',
+  standalone: true,
+  imports: [],
+  templateUrl: './control.component.html',
+  styleUrl: './control.component.css',
+  encapsulation: ViewEncapsulation.None,
+  // add here
+  host: {
+    class: 'control'
+  }
+})
+```
+- adding class properties like this is a valid approach even without `ViewEncapsulation.None`
+
+
