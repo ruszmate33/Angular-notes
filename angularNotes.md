@@ -3759,84 +3759,125 @@ export class DashboardItemComponent {
 
 - and at the server-status css
 - from
+
 ```css
 #status {
-    display: block;
-    width: 15rem;
-  }
-  
-  .status p:first-of-type {
-    font-weight: bold;
-    animation: pulse 2s infinite;
-    margin: 0 0 0.5rem 0;
-    font-size: 1.15rem;
-  }
-  
-  .status-online p:first-of-type {
-    color: #6a3cb0;
-  }
+  display: block;
+  width: 15rem;
+}
+
+.status p:first-of-type {
+  font-weight: bold;
+  animation: pulse 2s infinite;
+  margin: 0 0 0.5rem 0;
+  font-size: 1.15rem;
+}
+
+.status-online p:first-of-type {
+  color: #6a3cb0;
+}
 ```
+
 to
+
 ```css
 :host {
-    display: block;
-    width: 15rem;
-  }
-  
-  .status p:first-of-type {
-    font-weight: bold;
-    animation: pulse 2s infinite;
-    margin: 0 0 0.5rem 0;
-    font-size: 1.15rem;
-  }
-  
-  .status-online p:first-of-type {
-    color: #6a3cb0;
-  }
+  display: block;
+  width: 15rem;
+}
+
+.status p:first-of-type {
+  font-weight: bold;
+  animation: pulse 2s infinite;
+  margin: 0 0 0.5rem 0;
+  font-size: 1.15rem;
+}
+
+.status-online p:first-of-type {
+  color: #6a3cb0;
+}
 ```
 
 - don't replace `form` with `host` only ones without semantic meaning, like `div`
 - `tickets`
-from
+  from
+
 ```html
 <div id="new-ticket">
-  <app-new-ticket/>
+  <app-new-ticket />
 </div>
 ```
 
 ```css
 #tickets {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-  
-  #tickets ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    width: 15rem;
-  }
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+#tickets ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 15rem;
+}
 ```
 
 to
+
 ```html
 <div id="new-ticket">
-  <app-new-ticket/>
+  <app-new-ticket />
 </div>
 ```
 
 ```css
 :host {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+:host ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 15rem;
+}
+```
+
+#### Interacting with Host Elements: listen to events
+
+
+- also attach a method an listen for an event on the hosts
+
+```ts
+  host: {
+    class: 'control',
+    '(click)': 'onClick()'
+  },
+})
+export class ControlComponent {
+  label = input.required<string>();
+
+  onClick() {
+    console.log('Clicked!');
   }
+}
+```
+
+- with `HostListener` you can listen for such event more general 
+```ts
+host: {
+    class: 'control',
+    // '(click)': 'onClick()'
+  },
+})
+export class ControlComponent {
+  label = input.required<string>();
   
-  :host ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    width: 15rem;
+  @HostListener('click') onClick() {
+    console.log('Clicked!');
   }
+}
 ```
