@@ -3344,22 +3344,23 @@ to
 - with this it uses the fallback
 
 ```html
-<button appButton>
-  Logout
-</button>
+<button appButton>Logout</button>
 ```
-
 
 #### Multi-element Custom Components & Content Projection
+
 - create a `control` component
 - we move a part of the form there
+
 ```html
-  <p>
-    <label>Title</label>
-    <input name="title" id="title" />
-  </p>
+<p>
+  <label>Title</label>
+  <input name="title" id="title" />
+</p>
 ```
+
 - set it from the outside
+
 ```ts
 export class ControlComponent {
   label = input.required<string>();
@@ -3374,6 +3375,7 @@ export class ControlComponent {
 ```
 
 - be more retrictive with `select` to make it selective what can be projected into this
+
 ```html
 <p>
   <label>{{ label() }}</label>
@@ -3382,35 +3384,39 @@ export class ControlComponent {
 ```
 
 - use the `control` component
-from this
+  from this
+
 ```html
-  <p>
-    <label>Title</label>
-    <input name="title" id="title" />
-  </p>
+<p>
+  <label>Title</label>
+  <input name="title" id="title" />
+</p>
 ```
+
 to
+
 ```html
-  <app-control label="Title">
-    <input name="title" id="title" />
-  </app-control>
+<app-control label="Title">
+  <input name="title" id="title" />
+</app-control>
 ```
 
 and from
+
 ```html
-  <p>
-    <label>Request</label>
-    <textarea name="title" id="title" rows="3"></textarea>
-  </p>
+<p>
+  <label>Request</label>
+  <textarea name="title" id="title" rows="3"></textarea>
+</p>
 ```
+
 to
+
 ```html
-  <app-control label="Request">
-    <textarea name="title" id="title" rows="3"></textarea>
-  </app-control>
+<app-control label="Request">
+  <textarea name="title" id="title" rows="3"></textarea>
+</app-control>
 ```
-
-
 
 #### Understanding & Configuring View Encapsulation
 
@@ -3418,28 +3424,30 @@ to
 - eg. you want to use the style of a button elsewhere
 
 - the form style is broken inside control
+
 ```css
 .control label {
-    display: block;
-    font-size: 0.8rem;
-    font-weight: bold;
-    margin-bottom: 0.15rem;
-    color: #4f4b53;
-  }
-  
-  .control input,
-  .control textarea {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font: inherit;
-    font-size: 0.9rem;
-    color: #4f4b53;
-  }
+  display: block;
+  font-size: 0.8rem;
+  font-weight: bold;
+  margin-bottom: 0.15rem;
+  color: #4f4b53;
+}
+
+.control input,
+.control textarea {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font: inherit;
+  font-size: 0.9rem;
+  color: #4f4b53;
+}
 ```
 
 - in the control compoentn html file add the "control" css class
+
 ```html
 <p class="control">
   <label>{{ label() }}</label>
@@ -3453,12 +3461,12 @@ to
 
 ```ts
 @Component({
-  selector: 'app-control',
+  selector: "app-control",
   standalone: true,
   imports: [],
-  templateUrl: './control.component.html',
-  styleUrl: './control.component.css',
-  encapsulation: ViewEncapsulation.None
+  templateUrl: "./control.component.html",
+  styleUrl: "./control.component.css",
+  encapsulation: ViewEncapsulation.None,
 })
 export class ControlComponent {
   label = input.required<string>();
@@ -3467,84 +3475,92 @@ export class ControlComponent {
 
 - the default is `ViewEncapsulation.ShadowDom`
 
-
 #### Component host elements
 
 - the button is still broken
 - every Angular component has a "Host Element", which is the element, that is selected by the selector
 - eg.: `control` component -> `app-control`
 - this renders
+
 ```html
-<app-control>
-  <p class="control">
+<app-control> <p class="control"></p></app-control>
 ```
 
 - for the button: selector: 'button[appButton]', so this is its host element
 - in the "button" css you can target this with
-from
+  from
+
 ```css
 button {
-  display: inline-block
-  ...
+  display: inline-block...;
 }
 ```
+
 to
+
 ```css
 :host {
-  display: inline-block
-  ...
+  display: inline-block...;
 }
 ```
+
 - this allows you to apply styles to the rendered host element
 - also `button:hover` -> `:host:hover`
 
 #### Using Host elemets as Reusable elements
+
 - we have this rendered
+
 ```html
-<app-control>
-  <p class="control">
+<app-control> <p class="control"></p></app-control>
 ```
+
 because in the template
+
 ```html
 <p class="control">
   <label>{{ label() }}</label>
   <ng-content select="input, textarea"></ng-content>
 </p>
 ```
+
 - we dont this nesting
 - also in the css we are
+
 ```css
 .control label {
-    display: block;
-    font-size: 0.8rem;
-    font-weight: bold;
-    margin-bottom: 0.15rem;
-    color: #4f4b53;
-  }
-  
-  .control input,
-  .control textarea {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font: inherit;
-    font-size: 0.9rem;
-    color: #4f4b53;
-  }
+  display: block;
+  font-size: 0.8rem;
+  font-weight: bold;
+  margin-bottom: 0.15rem;
+  color: #4f4b53;
+}
+
+.control input,
+.control textarea {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font: inherit;
+  font-size: 0.9rem;
+  color: #4f4b53;
+}
 ```
 
 - removing the `<p class="control">` makes the styles broken, because in the css we look for .control class
+
 ```html
 <p class="control">
   <label>{{ label() }}</label>
   <ng-content select="input, textarea"></ng-content>
 </p>
 ```
+
 to
+
 ```html
-<label>{{ label() }}</label>
-<ng-content select="input, textarea"></ng-content>
+<label>{{ label() }}</label> <ng-content select="input, textarea"></ng-content>
 ```
 
 - adding `:host` selector to the css wont help because we disabled view-encapsulation with `ViewEncapsulation.ShadowDom`
@@ -3555,23 +3571,30 @@ to
 - we could add the `control` class where the `app-control` is used like in new-ticket
 
 from
+
 ```html
 <form>
   <app-control label="Title">
     <input name="title" id="title" />
   </app-control>
+</form>
 ```
+
 to
+
 ```html
 <form>
   <app-control class="control" label="Title">
     <input name="title" id="title" />
   </app-control>
+</form>
 ```
 
 #### Interacting with host elements from inside components
-- now we need to add `class="control"` everywhere where `app-control` occurs
+
+- now we need to add `class="control"` to all templates where `app-control` occurs
 - add it once at the component class
+
 ```ts
 @Component({
   selector: 'app-control',
@@ -3586,6 +3609,234 @@ to
   }
 })
 ```
+
 - adding class properties like this is a valid approach even without `ViewEncapsulation.None`
 
+#### When (not) to rely on host elements
 
+- `<div class="dashboard-item">` is redundant, remove it
+
+```html
+<div class="dashboard-item">
+  <article>
+    <header>
+      <img [src]="image().src" [alt]="image().alt" />
+      <h2>{{ title() }}</h2>
+    </header>
+    <ng-content />
+  </article>
+</div>
+```
+
+- remove it, and add to the component the `host`
+
+```html
+<article>
+  <header>
+    <img [src]="image().src" [alt]="image().alt" />
+    <h2>{{ title() }}</h2>
+  </header>
+  <ng-content />
+</article>
+```
+
+```ts
+@Component({
+  selector: 'app-dashboard-item',
+  standalone: true,
+  imports: [],
+  templateUrl: './dashboard-item.component.html',
+  styleUrl: './dashboard-item.component.css',
+  host: {
+    class: 'dashboard-item'  // add the CSS class
+  }
+})
+export class DashboardItemComponent {
+```
+
+- like this it is broken, also
+- `encapsulation: ViewEncapsulation.None` would help
+
+```ts
+  styleUrl: './dashboard-item.component.css',
+  encapsulation: ViewEncapsulation.None,
+  host: {
+    class: 'dashboard-item'
+  }
+})
+export class DashboardItemComponent {
+```
+
+- (it does not work for me)
+- only if I have with the default encapsulationn
+
+```ts
+@Component({
+  selector: 'app-dashboard-item',
+  standalone: true,
+  imports: [],
+  templateUrl: './dashboard-item.component.html',
+  styleUrl: './dashboard-item.component.css',
+  // encapsulation: ViewEncapsulation.None,
+  host: {
+    class: 'dashboard-item'
+  }
+})
+```
+
+- or there is an alternative approach,
+- still, you can add the `host` property to any component not just components without view-encapsulation
+- instead go to the css and change the `.dashboard-item` to `:host`
+- the component
+
+```ts
+@Component({
+  selector: 'app-dashboard-item',
+  standalone: true,
+  imports: [],
+  templateUrl: './dashboard-item.component.html',
+  styleUrl: './dashboard-item.component.css',
+  // host: {
+  //   class: 'dashboard-item'
+  // }
+})
+export class DashboardItemComponent {
+```
+
+- the css
+
+```css
+/* .dashboard-item { */
+:host {
+  display: block;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #f8f8f8;
+  box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* .dashboard-item header { */
+:host header {
+  display: flex;
+  padding: 0;
+  gap: 0.75rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+```
+
+- also remove some unnecessary wrappers, at `server-status`
+- delete the div with `id`
+
+```html
+<div id="status">
+  @if (currentStatus === 'online') {
+  <p>Servers are online</p>
+  <p>All systems are operational.</p>
+  } @else if (currentStatus === 'offline') {
+  <p>Servers are offline</p>
+  <p>Functionality should be restored soon.</p>
+  } @else {
+  <p>Server status is unknown</p>
+  <p>Fetching server status failed.</p>
+  }
+</div>
+```
+
+```html
+@if (currentStatus === 'online') {
+<p>Servers are online</p>
+<p>All systems are operational.</p>
+} @else if (currentStatus === 'offline') {
+<p>Servers are offline</p>
+<p>Functionality should be restored soon.</p>
+} @else {
+<p>Server status is unknown</p>
+<p>Fetching server status failed.</p>
+}
+```
+
+- and at the server-status css
+- from
+```css
+#status {
+    display: block;
+    width: 15rem;
+  }
+  
+  .status p:first-of-type {
+    font-weight: bold;
+    animation: pulse 2s infinite;
+    margin: 0 0 0.5rem 0;
+    font-size: 1.15rem;
+  }
+  
+  .status-online p:first-of-type {
+    color: #6a3cb0;
+  }
+```
+to
+```css
+:host {
+    display: block;
+    width: 15rem;
+  }
+  
+  .status p:first-of-type {
+    font-weight: bold;
+    animation: pulse 2s infinite;
+    margin: 0 0 0.5rem 0;
+    font-size: 1.15rem;
+  }
+  
+  .status-online p:first-of-type {
+    color: #6a3cb0;
+  }
+```
+
+- don't replace `form` with `host` only ones without semantic meaning, like `div`
+- `tickets`
+from
+```html
+<div id="new-ticket">
+  <app-new-ticket/>
+</div>
+```
+
+```css
+#tickets {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  #tickets ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 15rem;
+  }
+```
+
+to
+```html
+<div id="new-ticket">
+  <app-new-ticket/>
+</div>
+```
+
+```css
+:host {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  :host ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 15rem;
+  }
+```
