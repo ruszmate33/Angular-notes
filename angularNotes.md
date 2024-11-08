@@ -3912,3 +3912,14 @@ export class ServerStatusComponent {
 ```
 - only adds the class `status` if the the current status is offline 
 
+#### More CSS class bindings: deal with multiple classes simulatanously
+```html
+<div
+  [class.status]="{
+    status: true,
+    'status-online': currentStatus === 'online',
+    'status-offline': currentStatus === 'offline',
+    'status-unknown': currentStatus === 'unknown'
+  }"
+>
+```
