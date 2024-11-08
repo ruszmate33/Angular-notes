@@ -3896,3 +3896,19 @@ export class ControlComponent {
   }
 }
 ```
+
+
+#### Class Bindings: Add classes conditionally to templates
+```ts
+export class ServerStatusComponent {
+  currentStatus = 'online';  // enable changing this (online, offline, unknown)
+}
+```
+- bring back wrapping div on the template and add conditional class binding
+```html
+<div [class.status]="currentStatus === 'offline'">
+  ...
+</div>
+```
+- only adds the class `status` if the the current status is offline 
+
