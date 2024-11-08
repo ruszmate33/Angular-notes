@@ -3881,3 +3881,18 @@ export class ControlComponent {
   }
 }
 ```
+
+#### Acessing host elements programatically
+```ts
+import { ElementRef } from '@angular/core';
+
+export class ControlComponent {
+  label = input.required<string>();
+  private el = inject(ElementRef)
+  
+  @HostListener('click') onClick() {
+    console.log('Clicked!');
+    console.log(this.el)
+  }
+}
+```
