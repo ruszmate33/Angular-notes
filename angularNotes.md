@@ -3923,3 +3923,20 @@ export class ServerStatusComponent {
   }"
 >
 ```
+
+#### Bind styles programatically
+```html
+<div
+  [style]="{
+    fontSize: '64px'
+  }"
+>
+```
+or here
+```html
+<div id="chart">
+  @for (dataPoint of dummyTrafficData; track dataPoint.id) {
+  <div [style.height]="(dataPoint.value / maxTraffic) * 100 + '%'"></div>
+  }
+</div>
+```
