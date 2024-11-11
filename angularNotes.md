@@ -3941,7 +3941,7 @@ or here
 </div>
 ```
 
-### Manipulating state & using literal values 
+#### Manipulating state & using literal values 
 - "literal types": setting specific string values as types
 ```ts
 export class ServerStatusComponent {
@@ -3961,3 +3961,7 @@ export class ServerStatusComponent {
   }
 }
 ```
+
+### Introducing the Component Lifecycle: ngOnInit
+- lets keep the constructor lean, that code above belongs rather to the `ngOnInit`
+- initalized component input values are available in ngOnInit, not in constructor
