@@ -3965,3 +3965,86 @@ export class ServerStatusComponent {
 ### Introducing the Component Lifecycle: ngOnInit
 - lets keep the constructor lean, that code above belongs rather to the `ngOnInit`
 - initalized component input values are available in ngOnInit, not in constructor
+
+
+#### Implementing Lifecycle Interfaces 
+- if you introduce a type on `ngOnInit`, such as `ngOninit`
+- declare impementing an interface 
+```ts
+import { ... OnInit } from '@angular/core';
+
+export class ServerStatusComponent implements OnInit {
+```
+- like this, it will warn you about the typo, missing method
+
+### Component Lifecycle deepdive
+
+#### ngOnInit
+- don't do complex tasks in the `constructor()`, do the main initialization work in `ngOnInit()`, such as sending HTTP requests
+- you have access to `@Input` values via `this`
+
+#### ngOnChanges
+- executes if an `@Input` value changes, you can use to update some component internal state
+
+#### ngDoCheck
+- related to Angulars change detection mechanism
+- executed whenever Angular thinks a UI update might be needed
+- gets executed a lot, probably avoid it, it might be a simpler solution
+
+#### ngAfter... - ContentInit - ContentChecked - ViewInit - ViewChecked 
+- View: 
+  - is the html template (internally managed data structure that holds references to the DOM elements rendered by a component)
+  - all the DOM elements in the template are part of the view
+- Content:
+  - that might be projected into a View, like `<ng-content/>`
+  - some other (partial) View data structure projected into this components' View
+  - `ngAfterContentInit()` executes after initialized content
+  - `ngAfterContentChecked()` content has been checked by Angulars change detection mechanism
+  - not used too often
+
+124
+
+#### ngOnDestroy 
+- if you have an interval set up to a component, implement `ngOnDestroy`, otherwise if the component is gone, it can cause a memory leak (running an interval to non-existin component)
+```ts
+export class ServerStatusComponent implements OnInit, OnDestroy {
+
+  // assign the interval to a private variable
+  // private interval?: NodeJS.Timeout;
+  private interval?: ReturnType<typeof setInterval>;
+
+  ngOnInit() {
+    console.log('ON INIT');
+    this.interval = setInterval(() => {...}
+
+  ngOnDestroy() {
+    clearTimeout(this.interval);
+  }
+```
+
+#### DestroyRef
+```ts
+export class ServerStatusComponent implements OnInit {
+  ...
+  private destroyRef = inject(DestroyRef);
+
+  ngOnInit() {
+    console.log('ON INIT');
+    // just a local var
+    const interval = setInterval(() => {
+      const rnd = Math.random();
+      if (rnd < 0.5) {
+        this.currentStatus = 'online';
+      } else if (rnd < 0.9) {
+        this.currentStatus = 'online';
+      } else {
+        this.currentStatus = 'unknown';
+      }
+    }, 5000);
+
+    // setup listener for ondestroy
+    this.destroyRef.onDestroy(() => {
+      clearInterval(interval);
+    });
+  }
+```
